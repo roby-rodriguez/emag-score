@@ -1,0 +1,29 @@
+{
+  "name": "EmagScores",
+  "namelower": "emag-scores",
+  "version": "0.0.1",
+  "description": "Checker for product pricing history on emag.ro",
+  "main": "server.js",
+  "readme": "README.md",
+  "author": "RobyRodriguez",
+  "bugs" : {
+    "url" : "https://github.com/roby-rodriguez/emag-score/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roby-rodriguez/emag-score.git"
+  },
+  "devDependencies": {
+    "grunt"                   : "~0.4.5",
+    "grunt-contrib-clean"     : "~0.5.0",
+    "grunt-contrib-jshint"    : "~0.10.0",
+    "grunt-contrib-nodeunit"  : "~0.4.1",
+    "grunt-contrib-uglify"    : "~0.5.0",
+    "express"                 : "~4.7.2",
+    "mongodb"                 : "~1.4",
+    "request"                 : "*"
+  },
+  "scripts": {
+    "postinstall": "bower install"
+  }
+}
