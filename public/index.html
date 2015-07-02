@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EmagScores Showcase</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="libs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="libs/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/main.css" rel="stylesheet">
+    <!-- Timeline CSS -->
+    <link href="css/timeline.css" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="libs/morris.js/morris.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="wrapper" ng-app="emagScoresApp">
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Emag Scores</a>
+            </div>
+            <!-- Side-bar navigation -->
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="active">
+                            <a href="#/home"><i class="fa fa-fw fa-home"></i> Home</a>
+                        </li>
+                        <li>
+                            <a href="#/favorites"><i class="fa fa-fw fa-star"></i> Favorites</a>
+                        </li>
+                        <li>
+                            <a href="#" type="button" data-toggle="collapse" data-target="#bargainsSublist" aria-expanded="false" aria-controls="bargainsSublist">
+                                <i class="fa fa-fw fa-dollar">
+                                </i> Bargains<span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse" id="bargainsSublist">
+                                <li>
+                                    <a href="index.html">Phones</a>
+                                </li>
+                                <li>
+                                    <a href="index.html">TVs</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Angular view templating -->
+        <div ng-view class="view-animate"></div>
+    </div>
+    <!-- Angular Core -->
+    <script src="libs/angular/angular.js"></script>
+    <!-- Angular Routing -->
+    <script src="libs/angular-route/angular-route.js"></script>
+    <!-- jQuery -->
+    <script src="libs/jquery/dist/jquery.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="libs/metisMenu/dist/metisMenu.min.js"></script>
+    <!-- Morris Charts JavaScript -->
+    <script src="libs/raphael/raphael-min.js"></script>
+    <script src="libs/morris.js/morris.min.js"></script>
+    <!-- Custom Angular Controllers -->
+    <script src="js/controllers/homeController.js"></script>
+    <script src="js/controllers/favoritesController.js"></script>
+    <!-- Custom Angular Routes -->
+    <script src="js/appRoutes.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="js/ui.js"></script>
+</body>
+</html>
