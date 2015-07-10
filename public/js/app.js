@@ -19,6 +19,11 @@ app.config(function ($routeProvider) {
             controller: 'HomeController',
             controllerAs: 'vm'
         })
+        .when('/product', {
+            templateUrl: 'views/product.html',
+            controller: 'ProductController',
+            controllerAs: 'vm'
+        })
         .when('/favorites', {
             templateUrl: 'views/favorites.html',
             controller: 'FavoritesController',

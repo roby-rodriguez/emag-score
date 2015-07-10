@@ -1,7 +1,7 @@
 /**
  * Created by robaa on 02.07.2015.
  */
-angular.module('emagScoresApp').controller('HomeController', function($scope) {
+angular.module('emagScoresApp').controller('HomeController', function($scope, ProductFactory) {
     var vm = this;
 
     vm.ratingStyleClass = function(ratingScore, index) {
@@ -11,6 +11,10 @@ angular.module('emagScoresApp').controller('HomeController', function($scope) {
             return 'fa fa-star-half-o';
         else
             return 'fa fa-star-o';
+    };
+
+    vm.setProduct = function(data) {
+        ProductFactory.setProduct(data);
     };
 
     vm.emagBase = "http://www.emag.ro";
