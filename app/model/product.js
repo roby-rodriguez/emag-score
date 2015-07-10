@@ -46,7 +46,7 @@ var Product = {
                         $push : {
                             history: {
                                 price: doc.price,
-                                dateRecorded: new Date()
+                                dateRecorded: new Date().toString()
                             }
                         },
                         $set  : {

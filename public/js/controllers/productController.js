@@ -6,13 +6,17 @@ angular.module('emagScoresApp').controller('ProductController', function($scope,
 
     vm.product = ProductFactory.getProduct();
 
-    /*
     vm.productHistoryChart = new Morris.Area({
         element: 'productHistoryChart',
         data: vm.product.history,
-        xkey: 'Time',
-        ykeys: ['Price'],
-        labels: [vm.product.name]
+        xkey: 'dateRecorded',
+        ykeys: ['price'],
+        labels: [vm.product.name],
+        xLabels: 'day',
+        parseTime: false,
+        pointSize: 2,
+        hideHover: 'auto',
+        fillOpacity: 0.5,
+        resize: true
     });
-    */
 });
