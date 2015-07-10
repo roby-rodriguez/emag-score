@@ -4,86 +4,80 @@
 angular.module('emagScoresApp').controller('HomeController', function($scope) {
     var vm = this;
 
+    vm.ratingStyleClass = function(ratingScore, index) {
+        if (ratingScore >= (index + 1) * 20)
+            return 'fa fa-star';
+        else if (ratingScore > index * 20)
+            return 'fa fa-star-half-o';
+        else
+            return 'fa fa-star-o';
+    };
+
+    vm.emagBase = "http://www.emag.ro";
     vm.products = [
         {
-            "_id":"5592a0ec2b7b6a0b633f7aa4",
-            "name":"Telefon mobil Samsung GALAXY S6 Edge, 32GB, Gold",
-            "history":[
-                {
-                    "price":5799.9,
-                    "dateRecorded":"2015-06-30T14:00:12.848Z"
-                },
-                {
-                    "price":5799.9,
-                    "dateRecorded":"2015-06-30T14:02:43.012Z"
-                },
-                {
-                    "price":5799.9,
-                    "dateRecorded":"2015-06-30T14:20:10.788Z"
-                },
-                {
-                    "price":5799.9,
-                    "dateRecorded":"2015-06-30T14:25:55.072Z"
-                },
-                {
-                    "price":5799.9,
-                    "dateRecorded":"2015-06-30T14:26:36.234Z"
-                },
-                {
-                    "price":5799.9,
-                    "dateRecorded":"2015-06-30T14:30:44.175Z"
-                },
-                {
-                    "price":5799.9,
-                    "dateRecorded":"2015-06-30T20:16:22.656Z"
-                }
-            ],
-            "id":554272,
-            "price":5799.9,
-            "brand":"Samsung",
-            "category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile",
-            "description":"Memorie interna:32 GB | Culoare:Auriu",
-            "active":1
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":12.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
         },
         {
-            "_id":"5592a0ec2b7b6a0b633f7aa5",
-            "name":"Telefon mobil Apple iPhone 6, 16GB, Space Grey",
-            "history":[
-                {
-                    "price":5599,
-                    "dateRecorded":"2015-06-30T14:00:12.851Z"
-                },
-                {
-                    "price":5599,
-                    "dateRecorded":"2015-06-30T14:02:43.014Z"
-                },
-                {
-                    "price":5599,
-                    "dateRecorded":"2015-06-30T14:20:10.790Z"
-                },
-                {
-                    "price":5599,
-                    "dateRecorded":"2015-06-30T14:25:55.073Z"
-                },
-                {
-                    "price":5599,
-                    "dateRecorded":"2015-06-30T14:26:36.236Z"
-                },
-                {
-                    "price":5599,
-                    "dateRecorded":"2015-06-30T14:30:44.177Z"
-                },
-                {
-                    "price":5599,
-                    "dateRecorded":"2015-06-30T20:16:22.658Z"
-                }
-            ],
-            "id":464909,
-            "price":5599,
-            "brand":"Apple",
-            "category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile",
-            "description":"Memorie interna:16 GB | Culoare:Gri",
-            "active":1
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":33.7,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":45.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":95.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":85.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":65.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":35.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":39.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":75.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":75.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":75.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":75.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":75.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":75.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":75.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
+        },
+        {
+            "name":"Telefon mobil Samsung E5 Galaxy E500F, Dual Sim, 16GB, White","id":560566,"price":1299.99,"brand":"Samsung","category":"Laptop, Tablete & Telefoane/Telefoane mobile & accesorii/Telefoane Mobile","productLink":"/telefon-mobil-samsung-e5-galaxy-e500f-dual-sim-16gb-white-e5-dual-sim-white/pd/D1FBTMBBM/","imageLink":"//s2emagst.akamaized.net/products/1133/1132546/images/res_812f6f5dc15be4c86d0d18fea1f3dbd7_150x150_89i0.jpg","ratingScore":75.2,"nrRatings":21,"active":1,
+            "history":[{"price":5799.9,"dateRecorded":"2015-06-30T14:00:12.848Z"},{"price":5699.9,"dateRecorded":"2015-07-30T14:02:43.012Z"},{"price":5289.9,"dateRecorded":"2015-08-30T14:20:10.788Z"},{"price":6099.9,"dateRecorded":"2015-09-30T14:25:55.072Z"},{"price":5199.9,"dateRecorded":"2015-10-30T14:26:36.234Z"},{"price":6139.9,"dateRecorded":"2015-11-30T14:30:44.175Z"},{"price":5599.9,"dateRecorded":"2015-12-30T20:16:22.656Z"},{"price":5799.9,"dateRecorded":"2015-13-01T12:40:31.002Z"},{"price":5129.9,"dateRecorded":"2015-14-01T13:17:03.263Z"},{"price":5459.9,"dateRecorded":"2015-15-01T14:36:43.103Z"}]
         }
     ];
 });

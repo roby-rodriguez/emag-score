@@ -6,16 +6,31 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-4">
-                <div class="panel panel-default" ng-repeat="product in vm.products | orderBy: 'name'">
+            <div class="col-sm-4 col-md-3" ng-repeat="product in vm.products | orderBy: 'name'">
+                <div class="panel panel-default">
                     <div class="panel-heading">
-                        {{ product.name }}
+                        {{ product.category }}
                     </div>
                     <div class="panel-body">
-                        <p>{{ product.description }}</p>
+                        <p>{{ product.name }}</p>
+                        <img ng-src="{{product.imageLink}}" class="img-responsive" alt="Product image" >
+                        <br/>
+                        <div class="btn-group-vertical">
+                            <a ng-href="{{vm.emagBase + product.productLink}}" class="btn btn-primary btn-sm">
+                                <span class="fa fa-shopping-cart"></span> Go to product page
+                            </a>
+                            <a ng-href="#" class="btn btn-info btn-sm">
+                                <span class="fa fa-area-chart"></span> View price history
+                            </a>
+                            <a ng-href="#" class="btn btn-danger btn-sm">
+                                <span class="fa fa-heart"></span> Add to favorites
+                            </a>
+                        </div>
+                        <br/><br/>
+                        <div ng-include src="'templates/rating.html'"></div>
                     </div>
                     <div class="panel-footer">
-                        {{ product.price }}
+                        {{ product.price }} RON
                     </div>
                 </div>
             </div>
