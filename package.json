@@ -21,7 +21,8 @@
     "grunt-contrib-uglify"    : "~0.5.0",
     "express"                 : "~4.7.2",
     "mongodb"                 : "~1.4",
-    "request"                 : "*"
+    "request"                 : "*",
+    "cheerio"                 : "*"
   },
   "scripts": {
     "postinstall": "bower install"
