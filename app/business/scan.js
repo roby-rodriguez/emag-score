@@ -5,7 +5,7 @@ var cheerio = require('cheerio');
 var Scanner = {
     count: 0,
     products: [],
-    productsUrl: "http://www.emag.ro/telefoane-mobile/p$/c?pc=60",
+    productsUrl: "http://www.emag.ro/$0/p$1/c?pc=60",
 
     /**
      * Parallelized GET @ http://www.emag.ro/{category}/p{index}/c?pc=60
@@ -13,43 +13,25 @@ var Scanner = {
      * category -> ex. telefoane-mobile
      * index -> given by html text of last .emg-pagination-no
      */
-    scan: function() {
+    scan: function(category) {
         request({
             //proxy: "http://proxy.msg.de:3128",
-            url: Scanner.productsUrl.replace("$", "1"),
+            url: Scanner.productsUrl.replace("$0", category).replace("$1", "1"),
             method: "GET"
         }, function(error, response, html) {
             if (!error) {
-                //var pages = getPaginatorPages(html, 'emg-pagination-no');
-                html = html.substring(html.indexOf('<div id="products-holder"'));
-                html = html.substring(0, html.indexOf('<section') - 1);
-                var $ = cheerio.load(html);
-
-                $('.product-holder-grid').each(function () {
-                    var pid = $(this).find("input[name='product[]']").val();
-                    //var baseJson = $(this).find('input.dl_info').val();
-                    var productObj = $(this).find('a.link_imagine');
-                    var name = productObj.attr('title');
-                    var brand = getWord(2, name);
-                    var priceObject = $(this).find('span.price-over');
-                    var price = Number(priceObject.find('.money-int').text()) + Number(priceObject.find('.money-decimal').text())/100;
-                    var currency = priceObject.find('.money-currency').text().toLowerCase();
-                    var productLink = productObj.attr('href');
-                    var imgLink = $(this).find('span.image-container img').attr('src');
-                    var ratingObject = $(this).find('.holder-rating');
-                    //var ratingScore = ratingObject.next().next().next().attr('style');
-                    var ratingScore = ratingObject.find('.star-rating-small-progress').css('width');
-                    ratingScore = Number(ratingScore.substring(0, ratingScore.length - 1));
-                    var ratings = Number(ratingObject.text().match(/\d/g).join(""));
-                    var available = $(this).find('.stare-disp-listing').text().indexOf('In stoc') > -1 ? 1 : 0;
-                    var details = $(this).find('.feedback-right-msg').text().trim().replace(/\s+/g, " ");
+                var pages = getPaginatorPages(html, 'emg-pagination-no');
+                var json = grabProducts(html, category);
+                json.forEach(function(doc) {
+                    console.log(doc);
                 });
+
                 //console.log("page 1: " + Scanner.products);
                 //for (var i = 2; i <= parseInt(pages); i++) {
                     /*
                     request({
                         proxy: "http://proxy.msg.de:3128",
-                        url: Scanner.productsUrl.replace("$", i.toString()),
+                        url: Scanner.productsUrl.replace("$1", i.toString()),
                         method: "GET"
                     }, function(error, response, json) {
                         if (!error) {
@@ -98,6 +80,68 @@ var Scanner = {
         });
     }
 };
+
+/**
+ *  Extracts products from html and saves to db as json
+ *
+ * @param html the html holding the products grid
+ */
+function grabProducts(html, category) {
+    var json = new Array();
+    html = html.substring(html.indexOf('<div id="products-holder"'));
+    html = html.substring(0, html.indexOf('<section') - 1);
+    var $ = cheerio.load(html);
+
+    $('.product-holder-grid').each(function () {
+        var pid = $(this).find("input[name='product[]']");
+        if (pid.length) pid = pid.val();
+        var productObj = $(this).find('a.link_imagine');
+        if (productObj.length) {
+            var name = productObj.attr('title');
+            var brand = getWord(2, name);
+        }
+        if (name.indexOf("ASUS ZenFone") > -1){
+            name = name.substring(1);
+        }
+        var priceObject = $(this).find('span.price-over');
+        if (priceObject.length) {
+            var price = Number(priceObject.find('.money-int').text()) + Number(priceObject.find('.money-decimal').text()) / 100;
+            var currency = priceObject.find('.money-currency').text().toLowerCase();
+        }
+        var productLink = productObj.attr('href');
+        var imgLink = $(this).find('span.image-container img');
+        if (imgLink.length) imgLink = imgLink.attr('src');
+        var ratingObject = $(this).find('.holder-rating');
+        if (ratingObject.length) {
+            var ratingScore = ratingObject.find('.star-rating-small-progress');
+            if (ratingScore.length) {
+                ratingScore = ratingScore.css('width');
+                ratingScore = Number(ratingScore.substring(0, ratingScore.length - 1));
+            }
+            var ratings = ratingObject.text().match(/\d/g);
+            if (ratings != null) ratings = Number(ratings.join(""));
+        }
+        var available = $(this).find('.stare-disp-listing');
+        if (available.length) available = available.text().indexOf('In stoc') > -1 ? 1 : 0;
+        var details = $(this).find('.feedback-right-msg');
+        if (details.length) details = details.text().trim().replace(/\s+/g, " ");
+        json.push({
+            "name": name,
+            "id": pid,
+            "price": price,
+            "currency": currency,
+            "brand": brand,
+            "category": category,
+            "productLink": productLink,
+            "imageLink": imgLink,
+            "ratingScore": ratingScore,
+            "nrRatings": ratings,
+            "active": available,
+            "details": details
+        });
+    });
+    return json;
+}
 
 /**
  * Chops a {keyword} json out of the given {html}

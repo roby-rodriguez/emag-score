@@ -53,10 +53,15 @@ var Product = {
                             name: doc.name,
                             id: doc.id,
                             price : doc.price,
+                            currency: doc.currency,
                             brand: doc.brand,
                             category: doc.category,
-                            description: doc.variant,
-                            active: 1
+                            productLink: doc.productLink,
+                            imageLink: doc.imageLink,
+                            ratingScore: doc.ratingScore,
+                            nrRatings: doc.nrRatings,
+                            active: doc.active,
+                            details: doc.details
                         }
                     }
                 );

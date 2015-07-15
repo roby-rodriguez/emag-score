@@ -2,6 +2,9 @@
 // check out https://scotch.io/tutorials/build-a-restful-api-using-node-and-express-4
 
 /**
+ * About node.js:
+ * http://stackoverflow.com/questions/1884724/what-is-node-js/6782438#6782438
+ *
 Problems so far:
     - structure the project, see following links:
     https://scotch.io/tutorials/node-and-angular-to-do-app-application-organization-and-structure
@@ -43,7 +46,6 @@ app.use(express.static(__dirname + '/public'));
 app.listen(1337);
 console.log("Magic happens on port 1337...");
 
-//Scanner.rescan('telefoane-mobile');
 //console.log("all products: " + Scanner.products);
 //Product.testSaveBulkProducts();
-Scanner.scan();
+Scanner.scan("telefoane-mobile");
