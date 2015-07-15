@@ -1,10 +1,14 @@
-// scanner for emag.ro
+/**
+ * main scanner for emag.ro
+ *
+ * Links:
+ * http://stackoverflow.com/questions/10860244/how-to-make-the-require-in-node-js-to-be-always-relative-to-the-root-folder-of-t
+ */
 var request = require('request');
 var cheerio = require('cheerio');
+var Product  = require('../model/product');
 
 var Scanner = {
-    count: 0,
-    products: [],
     productsUrl: "http://www.emag.ro/$0/p$1/c?pc=60",
 
     /**
@@ -15,66 +19,31 @@ var Scanner = {
      */
     scan: function(category) {
         request({
-            //proxy: "http://proxy.msg.de:3128",
             url: Scanner.productsUrl.replace("$0", category).replace("$1", "1"),
             method: "GET"
         }, function(error, response, html) {
             if (!error) {
+                // first we need to find out the number of pages (1 req/page)
                 var pages = getPaginatorPages(html, 'emg-pagination-no');
                 var json = grabProducts(html, category);
-                json.forEach(function(doc) {
-                    console.log(doc);
-                });
 
-                //console.log("page 1: " + Scanner.products);
-                //for (var i = 2; i <= parseInt(pages); i++) {
-                    /*
+                for (var i = count = 2, total = parseInt(pages); i <= total; i++) {
                     request({
-                        proxy: "http://proxy.msg.de:3128",
-                        url: Scanner.productsUrl.replace("$1", i.toString()),
+                        url: Scanner.productsUrl.replace("$0", category).replace("$1", i.toString()),
                         method: "GET"
-                    }, function(error, response, json) {
+                    }, function(error, response, html) {
                         if (!error) {
-                            var productsHolder = html.substring(html.indexOf('<div id="products-holder"'), html.indexOf('<section') - 1);
-                            var $ = cheerio.load(productsHolder);
-                            var products = JSON.parse(JSON.stringify(getJsonString(json, 'impressions')));
-                            //console.log("page " + Scanner.count++ + ": " + products);
-                            Scanner.products.concat(products);
+                            // concatenate subsequent json arrays
+                            json = json.concat(grabProducts(html, category));
+                            if (++count == total) {
+                                /* json.foreach(function(doc, index) {
+                                    console.log("product " + index + ": ");
+                                    console.log(doc);
+                                }); */
+                                Product.saveBulkProducts(json);
+                            }
                         }
-                    })
-                    */
-                //}
-            }
-        });
-    },
-    /**
-     * Parallelized GET @ http://www.emag.ro/{category}/p{index}/c?pc=60
-     *
-     * category -> ex. telefoane-mobile
-     * index -> given by html text of last .emg-pagination-no
-     */
-    rescan: function(category) {
-        request({
-            proxy: "http://proxy.msg.de:3128",
-            url: Scanner.productsUrl.replace("$", "1"),
-            method: "GET"
-        }, function(error, response, json) {
-            if (!error) {
-                Scanner.products = JSON.parse(JSON.stringify(getJsonString(json, 'impressions')));
-                //console.log("page 1: " + Scanner.products);
-                var pages = getPaginatorPages(json, 'emg-pagination-no');
-                for (var i = 2; i <= parseInt(pages); i++) {
-                    request({
-                        proxy: "http://proxy.msg.de:3128",
-                        url: Scanner.productsUrl.replace("$", i.toString()),
-                        method: "GET"
-                    }, function(error, response, json) {
-                        if (!error) {
-                            var products = JSON.parse(JSON.stringify(getJsonString(json, 'impressions')));
-                            //console.log("page " + Scanner.count++ + ": " + products);
-                            Scanner.products.concat(products);
-                        }
-                    })
+                    });
                 }
             }
         });
@@ -117,6 +86,8 @@ function grabProducts(html, category) {
             if (ratingScore.length) {
                 ratingScore = ratingScore.css('width');
                 ratingScore = Number(ratingScore.substring(0, ratingScore.length - 1));
+            } else {
+                ratingScore = null;
             }
             var ratings = ratingObject.text().match(/\d/g);
             if (ratings != null) ratings = Number(ratings.join(""));
@@ -141,19 +112,6 @@ function grabProducts(html, category) {
         });
     });
     return json;
-}
-
-/**
- * Chops a {keyword} json out of the given {html}
- *
- * @param html
- * @param keyword
- * @returns {Blob|ArrayBuffer|string|Query}
- */
-function getJsonString(html, keyword) {
-    var index = html.lastIndexOf(keyword);
-    html = html.slice(index);
-    return html.slice(html.indexOf('[') + 1, html.indexOf(']'));
 }
 
 /**
