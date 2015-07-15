@@ -18,11 +18,17 @@ var mongo = require('mongodb'),
 
 var Product = {
     findProductsByTitle: function(req, res) {
-        console.log(req.params);
-        console.log('findProductsByTitle: ' + req.params.title);
-        db.collection('product').find({name: { $regex: req.params.title, $options: 'i'}}).toArray(function (err, docs) {
-            console.log('found: ' + docs);
-            res.jsonp(docs);
+        db.open(function(err, db) {
+            console.log(req.params);
+            console.log('findProductsByTitle: ' + req.params.title);
+            db.collection('product').find({name: { $regex: req.params.title, $options: 'i'}}).toArray(function (err, docs) {
+                if (err) {
+                    console.log('Error: ' + err);
+                } else {
+                    console.log('found: ' + docs);
+                    res.jsonp(docs);
+                }
+            });
         });
     },
     findAllProducts: function(req, res) {

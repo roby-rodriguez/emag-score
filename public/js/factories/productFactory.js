@@ -1,7 +1,6 @@
 /**
- * Created by robaa on 10.07.2015.
- */
-/**
+ * Factory for creating the 'product' object that is used for product.html
+ *
  * Links:
  * http://stackoverflow.com/questions/22408790/angularjs-passing-data-between-pages
  * http://stackoverflow.com/questions/12574765/better-design-for-passing-data-to-other-ng-views-and-persisting-it-across-contr

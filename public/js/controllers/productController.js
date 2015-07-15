@@ -1,5 +1,5 @@
 /**
- * Created by robaa on 10.07.2015.
+ * Controller for product view
  */
 angular.module('emagScoresApp').controller('ProductController', function($scope, ProductFactory) {
     var vm = this;
