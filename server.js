@@ -46,4 +46,5 @@ app.use(express.static(__dirname + '/public'));
 app.listen(1337);
 console.log("Magic happens on port 1337...");
 
+Product.initDB();
 //Scanner.scan("telefoane-mobile");

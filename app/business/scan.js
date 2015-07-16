@@ -2,6 +2,7 @@
  * main scanner for emag.ro
  *
  * Links:
+ * http://www.bennadel.com/blog/2169-where-does-node-js-and-require-look-for-modules.htm
  * http://stackoverflow.com/questions/10860244/how-to-make-the-require-in-node-js-to-be-always-relative-to-the-root-folder-of-t
  */
 var request = require('request');

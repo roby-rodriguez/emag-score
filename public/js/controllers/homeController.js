@@ -20,14 +20,14 @@ angular.module('emagScoresApp').controller('HomeController', function($scope, Pr
     };
 
     vm.emagBase = "http://www.emag.ro";
-    vm.displayProducts = function () {
+    $scope.displayProducts = function () {
         ProductService.retrieveProducts()
             .then(function (json) {
                 // promise fulfilled
-                vm.products = data;
+                vm.products = json;
             }, function(error) {
                 // display error message in UI
         });
     };
-    vm.displayProducts();
+    $scope.displayProducts();
 });

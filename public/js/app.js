@@ -11,7 +11,7 @@
 var app = angular.module("emagScoresApp", [
     'ngRoute'
 ]);
-
+app.constant('ENDPOINT_URI', 'http://localhost:1337/');
 app.config(function ($routeProvider) {
     $routeProvider
         .when('/home', {

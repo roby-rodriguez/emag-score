@@ -14,7 +14,6 @@ angular.module('emagScoresApp').service('ProductService', function($http, $q) {
     this.retrieveProducts = function () {
         var deferred = $q.defer();
         $http({
-            method: 'JSONP',
             url: productsUrl
         }).success(function(json){
             deferred.resolve(json);

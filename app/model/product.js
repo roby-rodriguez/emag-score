@@ -7,28 +7,32 @@
  * Links:
  * http://docs.mongodb.org/manual/core/crud-introduction/
  * http://mongodb.github.io/node-mongodb-native/2.0/api/
+ * https://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connection-pooling
  * http://christiankvalheim.com/post/the_new_bulk_api/
  * http://stackoverflow.com/questions/26924221/mongodb-journal-in-write-concern
  * http://stackoverflow.com/questions/5373198/mongodb-relationships-embed-or-reference
  */
-// you first have to enable 'emagscores-dev' by use in mongo shell
-//TODO use MongoClient https://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connection-pooling
-var mongo = require('mongodb'),
-    db = new mongo.Db('emagscores-dev', new mongo.Server('localhost', 27017, {auto_reconnect: true, minPoolSize: 5}));
+// you first have to enable 'emagscores-dev' by  calling 'use emagscores-dev' in mongo shell
+var MongoClient = require('mongodb').MongoClient;
+var db;
 
 var Product = {
+    initDB: function() {
+        MongoClient.connect("mongodb://localhost:27017/emagscores-dev", function (err, database) {
+            if (err) throw err;
+            db = database;
+        });
+    },
     findProductsByTitle: function(req, res) {
-        db.open(function(err, db) {
-            console.log(req.params);
-            console.log('findProductsByTitle: ' + req.params.title);
-            db.collection('product').find({name: { $regex: req.params.title, $options: 'i'}}).toArray(function (err, docs) {
-                if (err) {
-                    console.log('Error: ' + err);
-                } else {
-                    console.log('found: ' + docs);
-                    res.jsonp(docs);
-                }
-            });
+        console.log(req.params);
+        console.log('findProductsByTitle: ' + req.params.title);
+        db.collection('product').find({name: { $regex: req.params.title, $options: 'i'}}).toArray(function (err, docs) {
+            if (err) {
+                console.log('Error: ' + err);
+            } else {
+                console.log('found: ' + docs);
+                res.jsonp(docs);
+            }
         });
     },
     findAllProducts: function(req, res) {
