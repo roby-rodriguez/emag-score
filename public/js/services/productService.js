@@ -11,10 +11,10 @@ angular.module('emagScoresApp').service('ProductService', function($http, $q) {
     //var category = '';
     var productsUrl = 'http://localhost:1337/products';
 
-    this.retrieveProducts = function () {
+    this.retrieveProducts = function (pageNr, resultsPerPage) {
         var deferred = $q.defer();
         $http({
-            url: productsUrl
+            url: productsUrl + '/' + pageNr + '/' + resultsPerPage
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {

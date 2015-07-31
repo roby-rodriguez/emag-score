@@ -10,6 +10,7 @@ Problems so far:
     https://scotch.io/tutorials/node-and-angular-to-do-app-application-organization-and-structure
     http://stackoverflow.com/questions/13998793/structuring-a-nodejs-and-angular-js-app
     http://stackoverflow.com/questions/14417592/node-js-difference-between-req-query-and-req-params
+    https://www.safaribooksonline.com/blog/2014/03/13/parameterized-routes-express-js/
 
     SPAs:
     https://scotch.io/tutorials/setting-up-a-mean-stack-single-page-application
@@ -32,10 +33,14 @@ router.get('/', function(req, res) {
 
 /*
     REST api
-    http://localhost:1337/api/products
-    http://localhost:1337/api/products/:prod_id
+ http://localhost:1337/api/products/:pageNr/:resultsPerPage
+ http://localhost:1337/api/products/:title
  */
-router.get('/products', Product.findAllProducts);
+router.get('/products/:pageNr/:resultsPerPage', function(req, res) {
+    //var pageNr = req.params.pageNr;
+    //var resultsPerPage = req.params.resultsPerPage;
+    Product.findAllProducts(req, res)
+});
 router.get('/products/:title', Product.findProductsByTitle);
 
 // register routes -> all routes will be prefixed with /api

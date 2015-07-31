@@ -36,7 +36,13 @@ var Product = {
         });
     },
     findAllProducts: function(req, res) {
-        db.collection('product').find().toArray(function (err, docs) {
+        // for large amounts of documents skip() is slow, use http://stackoverflow.com/a/7230040
+        var pageNr = req.params.pageNr;
+        var resultsPerPage = parseInt(req.params.resultsPerPage);
+        db.collection('product').find()
+            .skip(pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0)
+            .limit(resultsPerPage)
+            .toArray(function (err, docs) {
             console.log('findAllProducts: ' + docs);
             res.jsonp(docs);
         });

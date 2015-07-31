@@ -5,6 +5,7 @@
  */
 angular.module('emagScoresApp').controller('HomeController', function($scope, ProductFactory, ProductService) {
     var vm = this;
+    var resultsPerPage = 5;
 
     vm.ratingStyleClass = function(ratingScore, index) {
         if (ratingScore >= (index + 1) * 20)
@@ -21,7 +22,7 @@ angular.module('emagScoresApp').controller('HomeController', function($scope, Pr
 
     vm.emagBase = "http://www.emag.ro";
     $scope.displayProducts = function () {
-        ProductService.retrieveProducts()
+        ProductService.retrieveProducts(0, resultsPerPage)
             .then(function (json) {
                 // promise fulfilled
                 vm.products = json;
