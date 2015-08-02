@@ -22,4 +22,16 @@ angular.module('emagScoresApp').service('ProductService', function($http, $q) {
         });
         return deferred.promise;
     }
+    //todo make this by category
+    this.retrieveTotalNrOfProducts = function () {
+        var deferred = $q.defer();
+        $http({
+            url: productsUrl + '/total'
+        }).success(function(json){
+            deferred.resolve(json);
+        }).error(function () {
+            deferred.reject('An error has occured.');
+        });
+        return deferred.promise;
+    }
 });

@@ -39,12 +39,19 @@ var Product = {
         // for large amounts of documents skip() is slow, use http://stackoverflow.com/a/7230040
         var pageNr = req.params.pageNr;
         var resultsPerPage = parseInt(req.params.resultsPerPage);
+        console.log("page no: " + pageNr + " results per page: " + resultsPerPage);
         db.collection('product').find()
             .skip(pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0)
             .limit(resultsPerPage)
             .toArray(function (err, docs) {
             console.log('findAllProducts: ' + docs);
             res.jsonp(docs);
+        });
+    },
+    findTotalNrOfProducts: function(req, res) {
+        db.collection('product').find().count(function (err, count) {
+            console.log('findTotalNrOfProducts: ' + count);
+            res.jsonp(count);
         });
     },
     saveBulkProducts: function (json) {

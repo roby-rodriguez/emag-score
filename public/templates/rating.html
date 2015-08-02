@@ -1,6 +1,6 @@
 <div class="star-rating">
     <span ng-repeat="star in [0, 1, 2, 3, 4]">
-        <span id="star{{star}}" ng-class="vm.ratingStyleClass(product.ratingScore,star)"></span>
+        <span id="star{{star}}" ng-class="ratingStyleClass(product.ratingScore,star)"></span>
     </span>
     <div class="text-info">Rating: {{product.ratingScore}}% ({{product.nrRatings}} reviews)</div>
 </div>

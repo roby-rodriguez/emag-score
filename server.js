@@ -41,6 +41,7 @@ router.get('/products/:pageNr/:resultsPerPage', function(req, res) {
     //var resultsPerPage = req.params.resultsPerPage;
     Product.findAllProducts(req, res)
 });
+router.get('/products/total', Product.findTotalNrOfProducts);
 router.get('/products/:title', Product.findProductsByTitle);
 
 // register routes -> all routes will be prefixed with /api

@@ -9,7 +9,8 @@
  * http://www.journaldev.com/6225/angular-js-routing-and-multiple-views-tutorial-example
  */
 var app = angular.module("emagScoresApp", [
-    'ngRoute'
+    'ngRoute',
+    'ui.bootstrap'
 ]);
 app.constant('ENDPOINT_URI', 'http://localhost:1337/');
 app.config(function ($routeProvider) {
