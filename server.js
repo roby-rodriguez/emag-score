@@ -53,4 +53,5 @@ app.listen(1337);
 console.log("Magic happens on port 1337...");
 
 Product.initDB();
-//Scanner.scan("telefoane-mobile");
+Scanner.scanCategories();
+//Scanner.scanProducts("telefoane-mobile");

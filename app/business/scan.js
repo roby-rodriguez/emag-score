@@ -10,7 +10,8 @@ var cheerio = require('cheerio');
 var Product  = require('../model/product');
 
 var Scanner = {
-    productsUrl: "http://www.emag.ro/$0/p$1/c?pc=60",
+    baseUrl: "http://www.emag.ro",
+    productsUrl: this.baseUrl + "/$0/p$1/c?pc=60",
 
     /**
      * Parallelized GET @ http://www.emag.ro/{category}/p{index}/c?pc=60
@@ -18,7 +19,7 @@ var Scanner = {
      * category -> ex. telefoane-mobile
      * index -> given by html text of last .emg-pagination-no
      */
-    scan: function(category) {
+    scanProducts: function(category) {
         request({
             url: Scanner.productsUrl.replace("$0", category).replace("$1", "1"),
             method: "GET"
@@ -46,6 +47,34 @@ var Scanner = {
                         }
                     });
                 }
+            } else {
+                // todo add error handling
+            }
+        });
+    },
+    /**
+     * Simple GET @ http://www.emag.ro/
+     * fetches all product categories - looks for either emg-menu-child (name which is likely to change)
+     * or <li><a href like '%/%s/c?%s%'
+     */
+    scanCategories: function() {
+        request({
+            url: Scanner.baseUrl,
+            method: "GET"
+        }, function(error, response, html) {
+            if (!error) {
+                // grab main menu nav tag
+                var json = new Array();
+                var navMenuIndex = html.indexOf('<nav id="emg-mega-menu"');
+                if (navMenuIndex > -1) {
+                    html = html.substring(navMenuIndex);
+                    html = html.substring(0, html.indexOf('</nav>') + 6);
+                } else {
+                    // nav container class name changed, load entire html and try to get lucky
+
+                }
+            } else {
+                // todo add error handling
             }
         });
     }
