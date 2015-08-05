@@ -69,6 +69,31 @@ var Scanner = {
                 if (navMenuIndex > -1) {
                     html = html.substring(navMenuIndex);
                     html = html.substring(0, html.indexOf('</nav>') + 6);
+                    var $ = cheerio.load(html);
+                    $('li a[href="javascript:void(0)"]').each(function () {
+                        var title = $(this).text(), lastParent;
+                        // skip recommended products section
+                        if (title.toLowerCase().indexOf('recomand') == -1) {
+                            $(this).parent().find('a').each(function () {
+                                var parentClass = $(this).parent().attr('class');
+                                if (typeof parentClass !== 'undefined'
+                                    && (parentClass.indexOf('title') > -1 || parentClass.indexOf('child') > -1)) {
+                                    // found parent/expandable or child/leaf category
+                                    // now extract category following {baseUrl}/{category}/c?{%s}
+                                    var name = extractCategory($(this).attr('href'));
+                                    if (name != null) {
+                                        // sometimes links to unrelated/not grab-able pages may come up - should be avoided
+                                        if (parentClass.indexOf('title') > -1) lastParent = name;
+                                        json.push({
+                                            "name": name,
+                                            "title": $(this).text(),
+                                            "parent": parentClass.indexOf('child') > -1 ? lastParent : undefined
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    });
                 } else {
                     // nav container class name changed, load entire html and try to get lucky
 
@@ -155,6 +180,18 @@ function getPaginatorPages(html, paginatorCss) {
     var index = html.lastIndexOf(paginatorCss);
     html = html.slice(index);
     return html.match(/\d+/)[0];
+}
+
+/**
+ * Extracts {category} from linkText
+ *
+ * @param linkText as /{category}/c?{%s}
+ * @returns {*}
+ */
+function extractCategory(linkText) {
+    var regex = /\/(.*)\/.\?/g;
+    var arr = regex.exec(linkText);
+    return arr != null ? arr[1] : null;
 }
 
 /**
