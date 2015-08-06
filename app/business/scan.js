@@ -8,6 +8,7 @@
 var request = require('request');
 var cheerio = require('cheerio');
 var Product  = require('../model/product');
+var Category  = require('../model/category');
 
 var Scanner = {
     baseUrl: "http://www.emag.ro",
@@ -94,6 +95,7 @@ var Scanner = {
                             });
                         }
                     });
+                    Category.saveBulkCategories(json);
                 } else {
                     // nav container class name changed, load entire html and try to get lucky
 

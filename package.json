@@ -22,7 +22,8 @@
     "express"                 : "~4.7.2",
     "mongodb"                 : "~1.4",
     "request"                 : "*",
-    "cheerio"                 : "*"
+    "cheerio"                 : "*",
+    "q"                       : "*"
   },
   "scripts": {
     "postinstall": "bower install"

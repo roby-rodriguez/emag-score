@@ -22,6 +22,7 @@ Problems so far:
 var express  = require('express');
 var app      = express();
 var Product  = require('./app/model/product');
+var Category  = require('./app/model/category');
 var Scanner  = require('./app/business/scan');
 
 // setup routing
@@ -52,6 +53,6 @@ app.use(express.static(__dirname + '/public'));
 app.listen(1337);
 console.log("Magic happens on port 1337...");
 
-Product.initDB();
-Scanner.scanCategories();
+Category.testSaveBulkCategories();
+//Scanner.scanCategories();
 //Scanner.scanProducts("telefoane-mobile");
