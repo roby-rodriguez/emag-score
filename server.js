@@ -42,8 +42,12 @@ router.get('/products/:pageNr/:resultsPerPage', function(req, res) {
     //var resultsPerPage = req.params.resultsPerPage;
     Product.findAllProducts(req, res)
 });
+router.get('/categories/:pageNr/:resultsPerPage', function(req, res) {
+    Category.findAllCategoriess(req, res)
+});
 router.get('/products/total', Product.findTotalNrOfProducts);
 router.get('/products/:title', Product.findProductsByTitle);
+
 
 // register routes -> all routes will be prefixed with /api
 app.use('/', router);
@@ -54,5 +58,6 @@ app.listen(1337);
 console.log("Magic happens on port 1337...");
 
 Category.testSaveBulkCategories();
+Product.testSaveBulkProducts();
 //Scanner.scanCategories();
 //Scanner.scanProducts("telefoane-mobile");

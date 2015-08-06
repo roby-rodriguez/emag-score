@@ -20,6 +20,7 @@ var Category = {
                 });
             }, function (reason) {
                 // handle onRejected
+                // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
                 console.log(reason);
             }
         );
@@ -54,6 +55,7 @@ var Category = {
                 });
             }, function (reason) {
                 // handle onRejected
+                // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
                 console.log(reason);
             }
         );
