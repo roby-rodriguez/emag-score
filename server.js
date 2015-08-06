@@ -57,7 +57,7 @@ app.use(express.static(__dirname + '/public'));
 app.listen(1337);
 console.log("Magic happens on port 1337...");
 
-Category.testSaveBulkCategories();
-Product.testSaveBulkProducts();
-//Scanner.scanCategories();
-//Scanner.scanProducts("telefoane-mobile");
+//Category.testSaveBulkCategories();
+//Product.testSaveBulkProducts();
+Scanner.scanCategories();
+Scanner.scanProducts("telefoane-mobile");

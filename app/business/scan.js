@@ -12,8 +12,9 @@ var Category  = require('../model/category');
 
 var Scanner = {
     baseUrl: "http://www.emag.ro",
-    productsUrl: this.baseUrl + "/$0/p$1/c?pc=60",
-
+    productsUrl: function () {
+        return this.baseUrl + "/$0/p$1/c?pc=60";
+    },
     /**
      * Parallelized GET @ http://www.emag.ro/{category}/p{index}/c?pc=60
      *
@@ -22,7 +23,7 @@ var Scanner = {
      */
     scanProducts: function(category) {
         request({
-            url: Scanner.productsUrl.replace("$0", category).replace("$1", "1"),
+            url: Scanner.productsUrl().replace("$0", category).replace("$1", "1"),
             method: "GET"
         }, function(error, response, html) {
             if (!error) {
@@ -32,17 +33,18 @@ var Scanner = {
 
                 for (var i = count = 2, total = parseInt(pages); i <= total; i++) {
                     request({
-                        url: Scanner.productsUrl.replace("$0", category).replace("$1", i.toString()),
+                        url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
                         method: "GET"
                     }, function(error, response, html) {
                         if (!error) {
                             // concatenate subsequent json arrays
+                            //console.log("i="+i+" count="+count+" total="+total);
                             json = json.concat(grabProducts(html, category));
                             if (++count == total) {
-                                /* json.foreach(function(doc, index) {
+                                /*json.forEach(function(doc, index) {
                                     console.log("product " + index + ": ");
                                     console.log(doc);
-                                }); */
+                                });*/
                                 Product.saveBulkProducts(json);
                             }
                         }
