@@ -80,7 +80,6 @@ var Product = {
                 // iterate documents to update
                 json.forEach(function (doc, index, array) {
                     // update product entry if found, appending current price to history, else freshly insert new product
-                    console.log("Index= " + index);
                     batch.find({name: doc.name}).upsert().updateOne(
                         {
                             $push : {
@@ -91,7 +90,7 @@ var Product = {
                             },
                             $set  : {
                                 name: doc.name,
-                                id: doc.id,
+                                pid: doc.pid,
                                 price : doc.price,
                                 currency: doc.currency,
                                 brand: doc.brand,

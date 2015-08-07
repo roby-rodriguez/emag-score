@@ -38,13 +38,12 @@ var Scanner = {
                     }, function(error, response, html) {
                         if (!error) {
                             // concatenate subsequent json arrays
-                            //console.log("i="+i+" count="+count+" total="+total);
                             json = json.concat(grabProducts(html, category));
                             if (++count == total) {
-                                /*json.forEach(function(doc, index) {
-                                    console.log("product " + index + ": ");
-                                    console.log(doc);
-                                });*/
+                                //json.forEach(function(doc, index) {
+                                //    console.log("product " + index + ": ");
+                                //    console.log(doc);
+                                //});
                                 Product.saveBulkProducts(json);
                             }
                         }
@@ -137,8 +136,10 @@ function grabProducts(html, category) {
             var currency = priceObject.find('.money-currency').text().toLowerCase();
         }
         var productLink = productObj.attr('href');
-        var imgLink = $(this).find('span.image-container img');
-        if (imgLink.length) imgLink = imgLink.attr('src');
+        var imgLinkObj = $(this).find('span.image-container img');
+        var imgLink = 'N/A';
+        //todo refine the line below -> search all attrs and extract text containing '.jpeg'/'.jpg'
+        if (imgLinkObj.length) imgLink = imgLinkObj.attr('data-src');
         var ratingObject = $(this).find('.holder-rating');
         if (ratingObject.length) {
             var ratingScore = ratingObject.find('.star-rating-small-progress');
@@ -155,9 +156,10 @@ function grabProducts(html, category) {
         if (available.length) available = available.text().indexOf('In stoc') > -1 ? 1 : 0;
         var details = $(this).find('.feedback-right-msg');
         if (details.length) details = details.text().trim().replace(/\s+/g, " ");
+        //todo don't add empty json strings/values, else it leads to circular ref errors
         json.push({
             "name": name,
-            "id": pid,
+            "pid": pid,
             "price": price,
             "currency": currency,
             "brand": brand,
