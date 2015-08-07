@@ -4,7 +4,20 @@
 var Database  = require('./database');
 
 var Category = {
-    findAllCategoriess: function(req, res) {
+    getCategories: function (callback) {
+        Database.connect().done(function (database) {
+                database.collection('category').find()
+                    .toArray(function (err, docs) {
+                        callback(docs);
+                    });
+            }, function (reason) {
+                // handle onRejected
+                // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
+                console.log(reason);
+            }
+        );
+    },
+    findAllCategories: function(req, res) {
         // for large amounts of documents skip() is slow, use http://stackoverflow.com/a/7230040
         Database.connect().done(function (database) {
             var pageNr = req.params.pageNr;

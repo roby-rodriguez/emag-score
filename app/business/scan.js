@@ -16,6 +16,19 @@ var Scanner = {
         return this.baseUrl + "/$0/p$1/c?pc=60";
     },
     /**
+     * Parallelized GETs on all product categories
+     *
+     * TODO implement some simple protection against CAPTCHAs -> delays or smth
+     */
+    scanEverything: function () {
+        Category.getCategories(function (docs) {
+            docs.forEach(function (doc, index) {
+                console.log("documet " + index);
+                console.log(doc);
+            })
+        })
+    },
+    /**
      * Parallelized GET @ http://www.emag.ro/{category}/p{index}/c?pc=60
      *
      * category -> ex. telefoane-mobile
