@@ -73,6 +73,7 @@ var Product = {
     saveBulkProducts: function (json) {
         // establish connection to db
         Database.connect().done(function (database) {
+                console.log("Started bulk update for category " + json[0].category);
                 // get (create) the collection
                 var col = database.collection('product');
                 // initialize the unordered batch

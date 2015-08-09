@@ -23,8 +23,9 @@ var Scanner = {
     scanEverything: function () {
         Category.getCategories(function (docs) {
             docs.forEach(function (doc, index) {
-                console.log("documet " + index);
-                console.log(doc);
+                // only look for leaf category items
+                if (doc.parent != null)
+                    Scanner.scanProducts(doc.name);
             })
         })
     },
@@ -41,6 +42,7 @@ var Scanner = {
         }, function(error, response, html) {
             if (!error) {
                 // first we need to find out the number of pages (1 req/page)
+                console.log("Requested category " + category);
                 var pages = getPaginatorPages(html, 'emg-pagination-no');
                 var json = grabProducts(html, category);
 
@@ -51,15 +53,22 @@ var Scanner = {
                     }, function(error, response, html) {
                         if (!error) {
                             // concatenate subsequent json arrays
+                            console.log("Received html response " + i + " category: " + category);
+                            if (html.indexOf("human_check") > -1)
+                                console.log("F*** me I'm famous! -> CAPTCHA!");
                             json = json.concat(grabProducts(html, category));
                             if (++count == total) {
                                 //json.forEach(function(doc, index) {
                                 //    console.log("product " + index + ": ");
                                 //    console.log(doc);
                                 //});
-                                Product.saveBulkProducts(json);
+                                if (json.length > 0)
+                                    Product.saveBulkProducts(json);
+                                else
+                                    console.log("No products found/extracted for category: " + category);
                             }
-                        }
+                        } else
+                            console.log("Scan product request error: " + error);
                     });
                 }
             } else {
