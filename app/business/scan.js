@@ -4,6 +4,10 @@
  * Links:
  * http://www.bennadel.com/blog/2169-where-does-node-js-and-require-look-for-modules.htm
  * http://stackoverflow.com/questions/10860244/how-to-make-the-require-in-node-js-to-be-always-relative-to-the-root-folder-of-t
+ *
+ * Check this out:
+ * http://stackoverflow.com/questions/23074901/express-making-multiple-http-requests-asynchronously
+ * http://stackoverflow.com/questions/13906357/making-multiple-requests-and-passing-them-to-a-template-express-node-js-fb
  */
 var request = require('request');
 var cheerio = require('cheerio');
@@ -26,8 +30,14 @@ var Scanner = {
                 // only look for leaf category items
                 if (doc.parent != null)
                     Scanner.scanProducts(doc.name);
-            })
-        })
+            });
+        });
+    },
+    testScanEverything: function () {
+        var json = [{name: "telefoane-mobile"}, {name: "laptopuri"}, {name: "tablete"}, {name: "procesoare"}, {name: "mediaplayere"}, {name: "carduri-memorie"}];
+        json.forEach(function (doc, index) {
+            Scanner.scanProducts(doc.name);
+        });
     },
     /**
      * Parallelized GET @ http://www.emag.ro/{category}/p{index}/c?pc=60
@@ -53,7 +63,7 @@ var Scanner = {
                     }, function(error, response, html) {
                         if (!error) {
                             // concatenate subsequent json arrays
-                            console.log("Received html response " + i + " category: " + category);
+                            console.log("Received html response " + count + " category: " + category);
                             if (html.indexOf("human_check") > -1)
                                 console.log("F*** me I'm famous! -> CAPTCHA!");
                             json = json.concat(grabProducts(html, category));
@@ -73,6 +83,7 @@ var Scanner = {
                 }
             } else {
                 // todo add error handling
+                console.log("Scan product request error: " + error);
             }
         });
     },

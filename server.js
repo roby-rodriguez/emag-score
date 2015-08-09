@@ -61,4 +61,4 @@ console.log("Magic happens on port 1337...");
 //Product.testSaveBulkProducts();
 //Scanner.scanCategories();
 //Scanner.scanProducts("telefoane-mobile");
-Scanner.scanEverything();
+Scanner.testScanEverything();
