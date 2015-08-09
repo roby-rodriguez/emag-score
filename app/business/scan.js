@@ -56,30 +56,35 @@ var Scanner = {
                 var pages = getPaginatorPages(html, 'emg-pagination-no');
                 var json = grabProducts(html, category);
 
-                for (var i = count = 2, total = parseInt(pages); i <= total; i++) {
-                    request({
-                        url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
-                        method: "GET"
-                    }, function(error, response, html) {
-                        if (!error) {
-                            // concatenate subsequent json arrays
-                            console.log("Received html response " + count + " category: " + category);
-                            if (html.indexOf("human_check") > -1)
-                                console.log("F*** me I'm famous! -> CAPTCHA!");
-                            json = json.concat(grabProducts(html, category));
-                            if (++count == total) {
-                                //json.forEach(function(doc, index) {
-                                //    console.log("product " + index + ": ");
-                                //    console.log(doc);
-                                //});
-                                if (json.length > 0)
-                                    Product.saveBulkProducts(json);
-                                else
-                                    console.log("No products found/extracted for category: " + category);
-                            }
-                        } else
-                            console.log("Scan product request error: " + error);
-                    });
+                if (pages == 1) {
+                    // FIXME this is somehow redundant but necessary
+                    Product.saveBulkProducts(json);
+                } else if (pages > 1) {
+                    for (var i = 2, count = 2, total = parseInt(pages); i <= total; i++) {
+                        request({
+                            url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
+                            method: "GET"
+                        }, function (error, response, html) {
+                            if (!error) {
+                                // concatenate subsequent json arrays
+                                console.log("Received html response " + count + " category: " + category);
+                                if (html.indexOf("human_check") > -1)
+                                    console.log("F*** me I'm famous! -> CAPTCHA!");
+                                json = json.concat(grabProducts(html, category));
+                                if (++count == total) {
+                                    //json.forEach(function(doc, index) {
+                                    //    console.log("product " + index + ": ");
+                                    //    console.log(doc);
+                                    //});
+                                    if (json.length > 0)
+                                        Product.saveBulkProducts(json);
+                                    else
+                                        console.log("No products found/extracted for category: " + category);
+                                }
+                            } else
+                                console.log("Scan product request error: " + error);
+                        });
+                    }
                 }
             } else {
                 // todo add error handling
