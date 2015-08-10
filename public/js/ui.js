@@ -10,9 +10,17 @@
 $(document).ready(function () {
     $('.collapse')
         .on('shown.bs.collapse', function () {
-            var obj = this;
+            $(this)
+                .parent()
+                .find(".fa-plus-circle")
+                .removeClass(".fa-plus-circle")
+                .addClass(".fa-minus-circle");
         })
         .on('hidden.bs.collapse', function () {
-            var obj = this;
+            $(this)
+                .parent()
+                .find(".fa-minus-circle")
+                .removeClass(".fa-minus-circle")
+                .addClass(".fa-plus-circle");
         });
 });
