@@ -1,0 +1,20 @@
+<li class="nav">
+    <div ng-repeat="category in categories | orderBy: 'name'">
+        <ul class="nav" id="#{{category.name}}_main">
+            <li>
+                <a href="#" type="button" data-toggle="collapse" data-target="#{{category.name}}_sublist" aria-expanded="false" aria-controls="{{category.name}}_sublist">
+                    <i class="fa fa-fw fa-plus-circle">
+                    </i> {{category.title}}<span class="fa arrow"></span>
+                </a>
+            </li>
+        </ul>
+        <ul class="nav nav-second-level collapse" id="{{category.name}}_sublist">
+            <li>
+                <a href="index.html">Phones</a>
+            </li>
+            <li>
+                <a href="index.html">TVs</a>
+            </li>
+        </ul>
+    </div>
+</li>

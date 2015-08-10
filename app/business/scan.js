@@ -124,11 +124,18 @@ var Scanner = {
                                     if (name != null) {
                                         // sometimes links to unrelated/not grab-able pages may come up - should be avoided
                                         if (parentClass.indexOf('title') > -1) lastParent = name;
-                                        json.push({
-                                            "name": name,
-                                            "title": $(this).text(),
-                                            "parent": parentClass.indexOf('child') > -1 ? lastParent : undefined
-                                        });
+                                        if (parentClass.indexOf('child') > -1) {
+                                            json[json.length - 1].subcategories = json[json.length - 1].subcategories || [];
+                                            json[json.length - 1].subcategories.push({
+                                                "name": name,
+                                                "title": $(this).text()
+                                            });
+                                        } else {
+                                            json.push({
+                                                "name": name,
+                                                "title": $(this).text()
+                                            });
+                                        }
                                     }
                                 }
                             });

@@ -18,25 +18,26 @@ var Category = {
         );
     },
     findAllCategories: function(req, res) {
-        // for large amounts of documents skip() is slow, use http://stackoverflow.com/a/7230040
         Database.connect().done(function (database) {
-            var pageNr = req.params.pageNr;
-            var resultsPerPage = parseInt(req.params.resultsPerPage);
-            if (isNaN(resultsPerPage)) resultsPerPage = 5;
-            console.log("page no: " + pageNr + " results per page: " + resultsPerPage);
-            database.collection('category').find()
-                .skip(pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0)
-                .limit(resultsPerPage)
-                .toArray(function (err, docs) {
-                    console.log('findAllCategoriess: ' + docs);
+            database.collection('category').aggregate(
+                [
+                    {$unwind: "$subcategories"},
+                    {$group:
+                        {
+                            // or simply use _id:"$title", instead of the next two lines
+                            _id:"$_id",
+                            title: {$first : "$title"},
+                            size: {$sum:1},
+                            subcategories: {$push:"$subcategories"}
+                        }
+                    },
+                    {$sort: {size:-1}}
+                ], function (err, docs) {
+                    console.log('findAllCategories (sort by nr of subcategories): ' + docs.length);
                     res.jsonp(docs);
-                });
-            }, function (reason) {
-                // handle onRejected
-                // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
-                console.log(reason);
-            }
-        );
+                }
+            );
+        });
     },
     saveBulkCategories: function (json) {
         // establish connection to db, for some reason calling then() isn't enough to get a full-fledged db object
@@ -54,7 +55,7 @@ var Category = {
                             $set  : {
                                 name: doc.name,
                                 title: doc.title,
-                                parent: doc.parent
+                                subcategories: doc.subcategories
                             }
                         }
                     );

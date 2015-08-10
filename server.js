@@ -42,9 +42,7 @@ router.get('/products/:pageNr/:resultsPerPage', function(req, res) {
     //var resultsPerPage = req.params.resultsPerPage;
     Product.findAllProducts(req, res)
 });
-router.get('/categories/:pageNr/:resultsPerPage', function(req, res) {
-    Category.findAllCategories(req, res)
-});
+router.get('/categories', Category.findAllCategories);
 router.get('/products/total', Product.findTotalNrOfProducts);
 router.get('/products/:title', Product.findProductsByTitle);
 
@@ -61,4 +59,4 @@ console.log("Magic happens on port 1337...");
 //Product.testSaveBulkProducts();
 //Scanner.scanCategories();
 //Scanner.scanProducts("telefoane-mobile");
-Scanner.testScanEverything();
+//Scanner.testScanEverything();

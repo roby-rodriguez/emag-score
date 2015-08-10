@@ -43,20 +43,9 @@
                         <li>
                             <a href="#/favorites"><i class="fa fa-fw fa-star"></i> Favorites</a>
                         </li>
-                        <li>
-                            <a href="#" type="button" data-toggle="collapse" data-target="#bargainsSublist" aria-expanded="false" aria-controls="bargainsSublist">
-                                <i class="fa fa-fw fa-dollar">
-                                </i> Bargains<span class="fa arrow"></span>
-                            </a>
-                            <ul class="nav nav-second-level collapse" id="bargainsSublist">
-                                <li>
-                                    <a href="index.html">Phones</a>
-                                </li>
-                                <li>
-                                    <a href="index.html">TVs</a>
-                                </li>
-                            </ul>
-                        </li>
+                        <div ng-controller="CategoryController">
+                            <div ng-include src="'views/category.html'"></div>
+                        </div>
                     </ul>
                 </div>
             </div>
@@ -86,6 +75,7 @@
     <script src="js/controllers/homeController.js"></script>
     <script src="js/controllers/favoritesController.js"></script>
     <script src="js/controllers/productController.js"></script>
+    <script src="js/controllers/categoryController.js"></script>
     <!-- Custom Angular Factories -->
     <script src="js/factories/productFactory.js"></script>
     <!-- Custom Angular Services -->
