@@ -12,6 +12,7 @@
  * TODO controllers tend to clutter unnecessary business logic, refactor to utilities/services
  */
 angular.module('emagScoresApp').controller('HomeController', function($rootScope, $scope, $log, ProductFactory, ProductService) {
+    //TODO products doesn't have to be on root scope
     $rootScope.products = [];
     $rootScope.paginator = {
         maxPages: 5,
@@ -37,16 +38,13 @@ angular.module('emagScoresApp').controller('HomeController', function($rootScope
         ProductFactory.setProduct(data);
     };
 
-    $scope.displayTotalNrOfProducts = function () {
-        ProductService.retrieveTotalNrOfProducts()
-            .then(function (total) {
-                // promise fulfilled
-                $rootScope.paginator.total = total;
-            }, function(error) {
-                // display error message in UI
-            });
-    }
-    $scope.displayTotalNrOfProducts();
+    ProductService.retrieveTotalNrOfProducts()
+        .then(function (total) {
+            // promise fulfilled
+            $rootScope.paginator.total = total;
+        }, function(error) {
+            // display error message in UI
+        });
 
     $scope.emagBase = "http://www.emag.ro";
     $scope.displayProducts = function () {
