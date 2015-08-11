@@ -49,9 +49,7 @@ angular.module('emagScoresApp').controller('ProductController', function($rootSc
                 // display error message in UI
             });
     };
-
-    CategoryFactory.initCategory(function (data) {
-        $scope.subcategory = data;
+    $scope.retrieveTotalNrOfProducts = function () {
         ProductService.retrieveTotalNrOfProducts($scope.subcategory.name)
             .then(function (total) {
                 // promise fulfilled
@@ -60,9 +58,15 @@ angular.module('emagScoresApp').controller('ProductController', function($rootSc
             }, function(error) {
                 // display error message in UI
             });
+    }
+
+    CategoryFactory.initCategory(function (data) {
+        $scope.subcategory = data;
+        $scope.retrieveTotalNrOfProducts();
     });
 
     $scope.$on('categoryChanged', function () {
         $scope.displayProducts();
+        $scope.retrieveTotalNrOfProducts();
     });
 });
