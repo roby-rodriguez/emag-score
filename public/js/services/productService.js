@@ -14,7 +14,7 @@ angular.module('emagScoresApp').service('ProductService', function($http, $q) {
     this.retrieveProducts = function (category, pageNr, resultsPerPage) {
         var deferred = $q.defer();
         $http({
-            url: productsUrl + '/' + pageNr + '/' + resultsPerPage + '/' + category
+            url: productsUrl + '/search/' + pageNr + '/' + resultsPerPage + '/' + category
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {
@@ -26,7 +26,7 @@ angular.module('emagScoresApp').service('ProductService', function($http, $q) {
     this.retrieveTotalNrOfProducts = function (category) {
         var deferred = $q.defer();
         $http({
-            url: productsUrl + '/total' + category
+            url: productsUrl + '/total/' + category
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {

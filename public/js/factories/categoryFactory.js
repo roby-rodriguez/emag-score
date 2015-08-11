@@ -9,7 +9,10 @@ angular.module('emagScoresApp').factory('CategoryFactory', function() {
             subcategory = data;
         },
         getCategory: function(callback) {
+            return subcategory;
+        },
+        initCategory: function(callback) {
             callback(subcategory);
-        }
+        },
     };
 });

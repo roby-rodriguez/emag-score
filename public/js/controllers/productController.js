@@ -39,7 +39,8 @@ angular.module('emagScoresApp').controller('ProductController', function($rootSc
     };
 
     $scope.emagBase = "http://www.emag.ro";
-    $scope.displayProducts = function () {
+    $rootScope.displayProducts = function () {
+        $scope.subcategory = CategoryFactory.getCategory();
         ProductService.retrieveProducts($scope.subcategory.name, $scope.paginator.currentPage, $scope.paginator.resultsPerPage)
             .then(function (json) {
                 // promise fulfilled
@@ -49,16 +50,19 @@ angular.module('emagScoresApp').controller('ProductController', function($rootSc
             });
     };
 
-    CategoryFactory.getCategory(function (data) {
+    CategoryFactory.initCategory(function (data) {
         $scope.subcategory = data;
-        $scope.displayProducts();
+        ProductService.retrieveTotalNrOfProducts($scope.subcategory.name)
+            .then(function (total) {
+                // promise fulfilled
+                $rootScope.paginator.total = total;
+                $scope.displayProducts();
+            }, function(error) {
+                // display error message in UI
+            });
     });
 
-    ProductService.retrieveTotalNrOfProducts($scope.subcategory.name)
-        .then(function (total) {
-            // promise fulfilled
-            $rootScope.paginator.total = total;
-        }, function(error) {
-            // display error message in UI
-        });
+    $scope.$on('categoryChanged', function () {
+        $scope.displayProducts();
+    });
 });
