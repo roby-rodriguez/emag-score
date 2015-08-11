@@ -40,7 +40,6 @@ angular.module('emagScoresApp').controller('ProductController', function($rootSc
 
     $scope.emagBase = "http://www.emag.ro";
     $rootScope.displayProducts = function () {
-        $scope.subcategory = CategoryFactory.getCategory();
         ProductService.retrieveProducts($scope.subcategory.name, $scope.paginator.currentPage, $scope.paginator.resultsPerPage)
             .then(function (json) {
                 // promise fulfilled
@@ -66,6 +65,7 @@ angular.module('emagScoresApp').controller('ProductController', function($rootSc
     });
 
     $scope.$on('categoryChanged', function () {
+        $scope.subcategory = CategoryFactory.getCategory();
         $scope.displayProducts();
         $scope.retrieveTotalNrOfProducts();
     });
