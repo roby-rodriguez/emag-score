@@ -41,9 +41,14 @@ var Product = {
         Database.connect().done(function (database) {
                 var pageNr = req.params.pageNr;
                 var resultsPerPage = parseInt(req.params.resultsPerPage);
+                var query;
                 if (isNaN(resultsPerPage)) resultsPerPage = 5;
                 console.log("page no: " + pageNr + " results per page: " + resultsPerPage);
-                database.collection('product').find()
+                if (typeof req.params.category !== 'undefined')
+                    query = database.collection('product').find({category: req.params.category});
+                else
+                    query = database.collection('product').find();
+                query
                     .skip(pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0)
                     .limit(resultsPerPage)
                     .toArray(function (err, docs) {
@@ -58,8 +63,14 @@ var Product = {
         );
     },
     findTotalNrOfProducts: function(req, res) {
+        console.log('findTotalNrOfProducts: ' + req.params.category);
         Database.connect().done(function (database) {
-                database.collection('product').find().count(function (err, count) {
+                var query;
+                if (typeof req.params.category !== 'undefined')
+                    query = database.collection('product').find({category: req.params.category});
+                else
+                    query = database.collection('product').find();
+                query.count(function (err, count) {
                     console.log('findTotalNrOfProducts: ' + count);
                     res.jsonp(count);
                 });

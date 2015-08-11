@@ -1,8 +1,12 @@
 /**
  * Controller for category view
  */
-angular.module('emagScoresApp').controller('CategoryController', function($rootScope, $scope, CategoryService) {
+angular.module('emagScoresApp').controller('CategoryController', function($rootScope, $scope, CategoryService, CategoryFactory) {
     $scope.categories = [];
+
+    $scope.setCategory = function(data) {
+        CategoryFactory.setCategory(data);
+    };
 
     CategoryService.retrieveCategories()
         .then(function (json) {

@@ -21,7 +21,7 @@ angular.module('emagScoresApp')
                         .find(".fa-plus-circle")
                         .removeClass("fa-plus-circle")
                         .addClass("fa-minus-circle");
-                })
+                    })
                     .on('hide.bs.collapse', function () {
                         $(this)
                             .parent()

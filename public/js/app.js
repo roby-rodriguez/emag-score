@@ -25,6 +25,11 @@ app.config(function ($routeProvider) {
             controller: 'ProductController',
             controllerAs: 'vm'
         })
+        .when('/productDetail', {
+            templateUrl: 'views/productDetail.html',
+            controller: 'ProductDetailController',
+            controllerAs: 'vm'
+        })
         .when('/favorites', {
             templateUrl: 'views/favorites.html',
             controller: 'FavoritesController',

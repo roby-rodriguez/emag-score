@@ -11,10 +11,10 @@ angular.module('emagScoresApp').service('ProductService', function($http, $q) {
     //var category = '';
     var productsUrl = 'http://localhost:1337/products';
 
-    this.retrieveProducts = function (pageNr, resultsPerPage) {
+    this.retrieveProducts = function (category, pageNr, resultsPerPage) {
         var deferred = $q.defer();
         $http({
-            url: productsUrl + '/' + pageNr + '/' + resultsPerPage
+            url: productsUrl + '/' + pageNr + '/' + resultsPerPage + '/' + category
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {
@@ -23,10 +23,10 @@ angular.module('emagScoresApp').service('ProductService', function($http, $q) {
         return deferred.promise;
     }
     //todo make this by category
-    this.retrieveTotalNrOfProducts = function () {
+    this.retrieveTotalNrOfProducts = function (category) {
         var deferred = $q.defer();
         $http({
-            url: productsUrl + '/total'
+            url: productsUrl + '/total' + category
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {
