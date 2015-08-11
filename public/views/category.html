@@ -2,8 +2,7 @@
     <div ng-repeat="category in categories | orderBy: 'name'">
         <ul class="nav" id="#{{category.name}}_main">
             <li>
-                <a ng-href="#"
-                   type="button"
+                <a type="button"
                    data-toggle="collapse"
                    data-target="#{{category._id}}"
                    aria-expanded="false"
