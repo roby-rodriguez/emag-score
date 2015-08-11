@@ -15,7 +15,7 @@
                 <a href="index.html" ng-if="category.size == 1">{{category.title}}</a>
             </li>
         </ul>
-        <ul class="nav nav-second-level collapse" id="{{category._id}}" ng-if="category.size > 1">
+        <ul class="nav nav-second-level collapse" id="{{category._id}}" ng-if="category.size > 1" collapsible>
             <div class="nav" ng-repeat="subcategory in category.subcategories | orderBy: 'name'">
                 <li class="nav">
                     <a href="index.html">{{subcategory.title}}</a>
