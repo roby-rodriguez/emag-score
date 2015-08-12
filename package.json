@@ -23,7 +23,8 @@
     "mongodb"                 : "~1.4",
     "request"                 : "*",
     "cheerio"                 : "*",
-    "q"                       : "*"
+    "q"                       : "*",
+    "cron"                    : "*"
   },
   "scripts": {
     "postinstall": "bower install"
