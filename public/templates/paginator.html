@@ -1,22 +1,28 @@
 <!-- www.botmonster.com/jquery-bootpag -->
-<div class="col-md-7">
-    <pagination
-            total-items="paginator.total"
-            ng-model="paginator.currentPage"
-            max-size="paginator.maxPages"
-            class="pagination-md"
-            boundary-links="true"
-            ng-change="pageChanged()">
-    </pagination>
-</div>
-<div class="col-md-5" >
-    <label class="control-label col-md-5">Results per Page</label>
-    <div class="selectContainer col-md-3">
-        <select name="resultsPerPage" class="form-control" ng-model="paginator.resultsPerPage">
-            <option value="5" selected>5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-        </select>
+<div class="emag-paginator">
+    <div class="col-md-6 emag-paginator-body">
+        <pagination
+                total-items="paginator.total"
+                ng-model="paginator.currentPage"
+                max-size="paginator.maxPages"
+                class="pagination-md"
+                boundary-links="true"
+                ng-change="pageChanged()">
+        </pagination>
+    </div>
+    <div class="col-md-5 pagination">
+        <div class="col-md-5 emag-paginator-results-select">
+            <label class="control-label">Results per Page</label>
+        </div>
+        <div class="selectContainer col-md-3">
+            <select name="resultsPerPage" class="form-control" ng-model="paginator.resultsPerPage">
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-1 pagination emag-paginator-results-display">
+        <pre class="ng-binding emag-paginator-results-display">Total number of products: 499</pre>
     </div>
 </div>
-<div><pre style="float: right;">Total number of products: {{paginator.total}}</pre></div>

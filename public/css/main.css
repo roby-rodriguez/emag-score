@@ -89,6 +89,19 @@ body {
     margin: 8px 0 0 115px;
 }
 
+.emag-paginator .emag-paginator-body {
+    width: inherit;
+}
+
+.emag-paginator .emag-paginator-results-select {
+    position: relative;
+    margin-top: 1%;
+}
+
+.emag-paginator .emag-paginator-results-display {
+    float: right;
+}
+
 .sidebar .sidebar-nav.navbar-collapse {
     padding-right: 0;
     padding-left: 0;
