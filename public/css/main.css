@@ -85,6 +85,10 @@ body {
     left: auto;
 }
 
+.custom-search-form {
+    margin: 8px 0 0 115px;
+}
+
 .sidebar .sidebar-nav.navbar-collapse {
     padding-right: 0;
     padding-left: 0;
