@@ -1,20 +1,18 @@
 <li>
-    <div ng-repeat="category in categories | orderBy: 'name'">
-        <ul class="nav" id="#{{category.name}}_main">
+    <div ng-repeat="category in categories | orderBy: 'name' track by $index">
+        <ul ng-class="getCategoryClass($index)" id="#{{category.name}}_main">
             <li>
                 <a type="button"
                    data-toggle="collapse"
                    data-target="#{{category._id}}"
                    aria-expanded="false"
-                   aria-controls="{{category._id}}"
-                   ng-if="category.size > 1">
+                   aria-controls="{{category._id}}">
                     <i class="fa fa-fw fa-plus-circle">
                     </i> {{category.title}}<span class="fa arrow"></span>
                 </a>
-                <a href="index.html" ng-if="category.size == 1">{{category.title}}</a>
             </li>
         </ul>
-        <ul class="nav nav-second-level collapse" id="{{category._id}}" ng-if="category.size > 1" collapsible>
+        <ul ng-class="getCategoryClass($index, 'nav-second-level collapse')" id="{{category._id}}" collapsible>
             <div class="nav" ng-repeat="subcategory in category.subcategories | orderBy: 'name'">
                 <li class="nav">
                     <a href="#/product" ng-click="setCategory(subcategory)">{{subcategory.title}}</a>
@@ -22,4 +20,11 @@
             </div>
         </ul>
     </div>
+    <ul class="nav nav-second-level">
+        <li class="nav">
+            <a ng-click="toggleShowCategories()">
+                <i ng-class="getToggleClass()"></i> Show {{collapsed ? 'more' : 'less'}}
+            </a>
+        </li>
+    </ul>
 </li>

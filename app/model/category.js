@@ -34,6 +34,12 @@ var Category = {
                     {$sort: {size:-1}}
                 ], function (err, docs) {
                     console.log('findAllCategories (sort by nr of subcategories): ' + docs.length);
+                    /* docs.forEach(function (doc, index, array) {
+                        console.log(doc.title);
+                        doc.subcategories.forEach(function (doc, index, array) {
+                            console.log("\t" + doc.title);
+                        });
+                    }); */
                     res.jsonp(docs);
                 }
             );
