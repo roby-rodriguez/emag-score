@@ -86,7 +86,7 @@ body {
 }
 
 .custom-search-form {
-    margin: 8px 0 0 115px;
+    margin: 8px 0 0 70px;
 }
 
 .emag-paginator .emag-paginator-body {
@@ -100,6 +100,15 @@ body {
 
 .emag-paginator .emag-paginator-results-display {
     float: right;
+}
+
+.navbar-toggle {
+    display:block;
+    margin: 8px 15px 8px 5px;
+}
+
+.navbar-brand {
+    margin-left: -15px;
 }
 
 .sidebar .sidebar-nav.navbar-collapse {

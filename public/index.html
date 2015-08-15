@@ -26,18 +26,18 @@
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <!-- Home link -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#sidebar-navigation">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#/home">Emag Scores</a>
             </div>
+            <a class="navbar-brand" href="#/home">Emag Scores</a>
             <!-- Top-bar navigation -->
             <div ng-include src="'views/topMenu.html'"></div>
             <!-- Side-bar navigation -->
-            <div class="navbar-default sidebar" role="navigation">
+            <div id="sidebar-navigation" class="navbar-default sidebar collapse in" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li class="active">
