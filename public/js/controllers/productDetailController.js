@@ -11,7 +11,7 @@ angular.module('emagScoresApp').controller('ProductDetailController', function($
         data: vm.product.history,
         xkey: 'dateRecorded',
         ykeys: ['price'],
-        labels: [vm.product.name],
+        labels: ['Price'],
         xLabels: 'day',
         parseTime: false,
         pointSize: 2,

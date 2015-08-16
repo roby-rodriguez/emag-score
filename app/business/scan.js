@@ -28,8 +28,11 @@ var Scanner = {
         Category.getCategories(function (docs) {
             docs.forEach(function (doc, index) {
                 // only look for leaf category items
-                if (doc.parent != null)
-                    Scanner.scanProducts(doc.name);
+                if (doc.subcategories != null) {
+                    doc.subcategories.forEach(function (doc, index) {
+                        Scanner.scanProducts(doc.name);
+                    });
+                }
             });
         });
     },
@@ -53,37 +56,43 @@ var Scanner = {
             if (!error) {
                 // first we need to find out the number of pages (1 req/page)
                 console.log("Requested category " + category);
-                var pages = getPaginatorPages(html, 'emg-pagination-no');
-                var json = grabProducts(html, category);
+                if (html.indexOf("human_check") > -1)
+                    console.log("F*** me I'm famous! -> CAPTCHA!");
+                else {
+                    var pages = getPaginatorPages(html, 'emg-pagination-no');
+                    var json = grabProducts(html, category);
 
-                if (pages == 1) {
-                    // FIXME this is somehow redundant but necessary
-                    Product.saveBulkProducts(json);
-                } else if (pages > 1) {
-                    for (var i = 2, count = 2, total = parseInt(pages); i <= total; i++) {
-                        request({
-                            url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
-                            method: "GET"
-                        }, function (error, response, html) {
-                            if (!error) {
-                                // concatenate subsequent json arrays
-                                console.log("Received html response " + count + " category: " + category);
-                                if (html.indexOf("human_check") > -1)
-                                    console.log("F*** me I'm famous! -> CAPTCHA!");
-                                json = json.concat(grabProducts(html, category));
-                                if (++count == total) {
-                                    //json.forEach(function(doc, index) {
-                                    //    console.log("product " + index + ": ");
-                                    //    console.log(doc);
-                                    //});
-                                    if (json.length > 0)
-                                        Product.saveBulkProducts(json);
-                                    else
-                                        console.log("No products found/extracted for category: " + category);
-                                }
-                            } else
-                                console.log("Scan product request error: " + error);
-                        });
+                    if (pages == 1) {
+                        // FIXME this is somehow redundant but necessary
+                        Product.saveBulkProducts(json);
+                    } else if (pages > 1) {
+                        for (var i = 2, count = 2, total = parseInt(pages); i <= total; i++) {
+                            request({
+                                url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
+                                method: "GET"
+                            }, function (error, response, html) {
+                                if (!error) {
+                                    // concatenate subsequent json arrays
+                                    console.log("Received html response " + count + " category: " + category);
+                                    if (html.indexOf("human_check") > -1)
+                                        console.log("F*** me I'm famous! -> CAPTCHA!");
+                                    else {
+                                        json = json.concat(grabProducts(html, category));
+                                        if (++count == total) {
+                                            //json.forEach(function(doc, index) {
+                                            //    console.log("product " + index + ": ");
+                                            //    console.log(doc);
+                                            //});
+                                            if (json.length > 0)
+                                                Product.saveBulkProducts(json);
+                                            else
+                                                console.log("No products found/extracted for category: " + category);
+                                        }
+                                    }
+                                } else
+                                    console.log("Scan product request error: " + error);
+                            });
+                        }
                     }
                 }
             } else {
@@ -177,12 +186,12 @@ function grabProducts(html, category) {
         }
         var priceObject = $(this).find('span.price-over');
         if (priceObject.length) {
-            var price = Number(priceObject.find('.money-int').text()) + Number(priceObject.find('.money-decimal').text()) / 100;
+            var price = Number(priceObject.find('.money-int').text().replace(/[^0-9]/, '')) + Number(priceObject.find('.money-decimal').text()) / 100;
             var currency = priceObject.find('.money-currency').text().toLowerCase();
         }
         var productLink = productObj.attr('href');
-        var imgLinkObj = $(this).find('span.image-container img');
-        var imgLink = 'N/A';
+        var imgLinkObj = $(this).find('img');
+        var imgLink = './resources/img/product_na.jpg';
         //todo refine the line below -> search all attrs and extract text containing '.jpeg'/'.jpg'
         if (imgLinkObj.length) imgLink = imgLinkObj.attr('data-src');
         var ratingObject = $(this).find('.holder-rating');

@@ -14,6 +14,7 @@
  */
 // you first have to enable 'emagscores-dev' by  calling 'use emagscores-dev' in mongo shell
 var Database  = require('./database');
+var DateUtil = require('../common/dateUtil');
 
 var Product = {
     findProductsByTitle: function(req, res) {
@@ -94,10 +95,10 @@ var Product = {
                     // update product entry if found, appending current price to history, else freshly insert new product
                     batch.find({name: doc.name}).upsert().updateOne(
                         {
-                            $push : {
+                            $addToSet : {
                                 history: {
                                     price: doc.price,
-                                    dateRecorded: new Date().toString()
+                                    dateRecorded: DateUtil.getCurrentDate()
                                 }
                             },
                             $set  : {
