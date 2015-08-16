@@ -124,8 +124,9 @@ var Product = {
                     if (err)
                         console.log(err);
                     else
-                        console.log("DB bulk save (matched: " + result.nMatched + ", inserted: " + result.nInserted
-                            + ", upserted: " + result.nUpserted + ", modified: " + result.nModified + ", removed: " + result.nRemoved);
+                        console.log("Finished bulk update for category " + json[0].category + " -> matched: " + result.nMatched
+                            + ", inserted: " + result.nInserted + ", upserted: " + result.nUpserted + ", modified: "
+                            + result.nModified + ", removed: " + result.nRemoved);
                 });
             }, function (reason) {
                 // handle onRejected

@@ -24,13 +24,27 @@ var Scanner = {
      *
      * TODO implement some simple protection against CAPTCHAs -> delays or smth
      */
-    scanEverything: function () {
+    scanEverything: function (callback) {
         Category.getCategories(function (docs) {
-            docs.forEach(function (doc, index) {
+            var failed = new Array();
+            var index = 0;
+            var total = getTotal(docs);
+            docs.forEach(function (doc) {
                 // only look for leaf category items
                 if (doc.subcategories != null) {
-                    doc.subcategories.forEach(function (doc, index) {
-                        Scanner.scanProducts(doc.name);
+                    doc.subcategories.forEach(function (sdoc) {
+                        Scanner.scanProducts(sdoc.name, function (success) {
+                            // check if current category has successfully been scanned
+                            if (success) {
+                                console.log("Finished category " + sdoc.name);
+                            } else {
+                                console.log("Could not finish category " + sdoc.name);
+                                failed.push(doc);
+                            }
+                            if (++index == total)
+                                callback(failed);
+                            console.log("Index=" + index + " total=" + total);
+                        });
                     });
                 }
             });
@@ -45,10 +59,11 @@ var Scanner = {
     /**
      * Parallelized GET @ http://www.emag.ro/{category}/p{index}/c?pc=60
      *
-     * category -> ex. telefoane-mobile
+     * @param category e.g. telefoane-mobile
      * index -> given by html text of last .emg-pagination-no
+     * @param callback called when fully scanned or on error
      */
-    scanProducts: function(category) {
+    scanProducts: function(category, callback) {
         request({
             url: Scanner.productsUrl().replace("$0", category).replace("$1", "1"),
             method: "GET"
@@ -56,15 +71,20 @@ var Scanner = {
             if (!error) {
                 // first we need to find out the number of pages (1 req/page)
                 console.log("Requested category " + category);
-                if (html.indexOf("human_check") > -1)
+                if (html.indexOf("human_check") > -1) {
                     console.log("F*** me I'm famous! -> CAPTCHA!");
-                else {
+                    callback(false);
+                } else {
                     var pages = getPaginatorPages(html, 'emg-pagination-no');
                     var json = grabProducts(html, category);
 
                     if (pages == 1) {
                         // FIXME this is somehow redundant but necessary
-                        Product.saveBulkProducts(json);
+                        if (json.length > 0)
+                            Product.saveBulkProducts(json);
+                        else
+                            console.log("No products found/extracted for category: " + category);
+                        callback(true);
                     } else if (pages > 1) {
                         for (var i = 2, count = 2, total = parseInt(pages); i <= total; i++) {
                             request({
@@ -74,19 +94,21 @@ var Scanner = {
                                 if (!error) {
                                     // concatenate subsequent json arrays
                                     console.log("Received html response " + count + " category: " + category);
-                                    if (html.indexOf("human_check") > -1)
+                                    if (html.indexOf("human_check") > -1) {
                                         console.log("F*** me I'm famous! -> CAPTCHA!");
-                                    else {
+                                        callback(false);
+                                    } else {
                                         json = json.concat(grabProducts(html, category));
                                         if (++count == total) {
                                             //json.forEach(function(doc, index) {
                                             //    console.log("product " + index + ": ");
                                             //    console.log(doc);
                                             //});
-                                            if (json.length > 0)
+                                            if (json.length > 0) {
                                                 Product.saveBulkProducts(json);
-                                            else
+                                            } else
                                                 console.log("No products found/extracted for category: " + category);
+                                            callback(true);
                                         }
                                     }
                                 } else
@@ -263,6 +285,24 @@ function extractCategory(linkText) {
  */
 function getWord(n, text) {
     return text.split(" ")[n];
+}
+
+/**
+ * Gets the total number of subcategories of the given category array
+ *
+ * @param docs category array
+ * @returns {number} total number of subcategories
+ */
+function getTotal(docs) {
+    var total = 0;
+    docs.forEach(function (doc) {
+        if (doc.subcategories != null) {
+            doc.subcategories.forEach(function () {
+                ++total;
+            });
+        }
+    });
+    return total;
 }
 
 module.exports = Scanner;
