@@ -39,7 +39,8 @@ var Scanner = {
                                 console.log("Finished category " + sdoc.name);
                             } else {
                                 console.log("Could not finish category " + sdoc.name);
-                                failed.push(doc);
+                                if (failed.indexOf(doc) == -1)
+                                    failed.push(doc);
                             }
                             if (++index == total)
                                 callback(failed);
@@ -51,9 +52,16 @@ var Scanner = {
         });
     },
     testScanEverything: function () {
-        var json = [{name: "telefoane-mobile"}, {name: "laptopuri"}, {name: "tablete"}, {name: "procesoare"}, {name: "mediaplayere"}, {name: "carduri-memorie"}];
+        //var json = [{name: "telefoane-mobile"}, {name: "laptopuri"}, {name: "tablete"}, {name: "procesoare"}, {name: "mediaplayere"}, {name: "carduri-memorie"}];
+        var json = [{name: "skateboard"}, {name: "drumetii"}, {name: "role"}, {name: "trotinete"}];
         json.forEach(function (doc, index) {
-            Scanner.scanProducts(doc.name);
+            Scanner.scanProducts(doc.name, function (success) {
+                if (success) {
+                    console.log("Finished category");
+                } else {
+                    console.log("Could not finish category");
+                }
+            });
         });
     },
     /**
@@ -78,14 +86,12 @@ var Scanner = {
                     var pages = getPaginatorPages(html, 'emg-pagination-no');
                     var json = grabProducts(html, category);
 
-                    if (pages == 1) {
-                        // FIXME this is somehow redundant but necessary
-                        if (json.length > 0)
-                            Product.saveBulkProducts(json);
-                        else
-                            console.log("No products found/extracted for category: " + category);
-                        callback(true);
-                    } else if (pages > 1) {
+                    // FIXME this is somehow redundant but necessary
+                    if (json.length > 0)
+                        Product.saveBulkProducts(json);
+                    else
+                        console.log("No products found/extracted for category: " + category);
+                    if (pages > 1) {
                         for (var i = 2, count = 2, total = parseInt(pages); i <= total; i++) {
                             request({
                                 url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
@@ -99,7 +105,7 @@ var Scanner = {
                                         callback(false);
                                     } else {
                                         json = json.concat(grabProducts(html, category));
-                                        if (++count == total) {
+                                        if (count++ == total) {
                                             //json.forEach(function(doc, index) {
                                             //    console.log("product " + index + ": ");
                                             //    console.log(doc);
@@ -115,6 +121,9 @@ var Scanner = {
                                     console.log("Scan product request error: " + error);
                             });
                         }
+                    } else {
+                        // only one page, so finished already
+                        callback(true);
                     }
                 }
             } else {
