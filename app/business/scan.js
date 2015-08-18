@@ -15,6 +15,7 @@ var Product  = require('../model/product');
 var Category  = require('../model/category');
 
 var Scanner = {
+    ScanStatus: { FOUND: 0, NOT_FOUND: 1, FAILED: -1 },
     baseUrl: "http://www.emag.ro",
     productsUrl: function () {
         return this.baseUrl + "/$0/p$1/c?pc=60";
@@ -22,28 +23,38 @@ var Scanner = {
     /**
      * Parallelized GETs on all product categories
      *
-     * TODO implement some simple protection against CAPTCHAs -> delays or smth
+     * TODO implement some simple protection against CAPTCHAs -> delays/retry or smth
      */
     scanEverything: function (callback) {
         Category.getCategories(function (docs) {
+            var processed = new Array();
             var failed = new Array();
+            var notFound = new Array();
             var index = 0;
             var total = getTotal(docs);
             docs.forEach(function (doc) {
                 // only look for leaf category items
                 if (doc.subcategories != null) {
                     doc.subcategories.forEach(function (sdoc) {
-                        Scanner.scanProducts(sdoc.name, function (success) {
+                        Scanner.scanProducts(sdoc.name, function (docs, status) {
                             // check if current category has successfully been scanned
-                            if (success) {
+                            if (status == Scanner.ScanStatus.FOUND) {
                                 console.log("Finished category " + sdoc.name);
+                                processed = processed.concat(docs);
+                            } else if (status == Scanner.ScanStatus.NOT_FOUND) {
+                                console.log("Could not finish category");
+                                if (notFound.indexOf(doc) == -1)
+                                    notFound.push(doc);
                             } else {
-                                console.log("Could not finish category " + sdoc.name);
+                                console.log("Failed to finish category");
                                 if (failed.indexOf(doc) == -1)
                                     failed.push(doc);
                             }
-                            if (++index == total)
-                                callback(failed);
+                            if (++index == total) {
+                                console.log("Finished iteration over all categories");
+                                Product.saveBulkProducts(processed);
+                                callback(failed, notFound);
+                            }
                             console.log("Index=" + index + " total=" + total);
                         });
                     });
@@ -53,19 +64,23 @@ var Scanner = {
     },
     testScanEverything: function () {
         //var json = [{name: "telefoane-mobile"}, {name: "laptopuri"}, {name: "tablete"}, {name: "procesoare"}, {name: "mediaplayere"}, {name: "carduri-memorie"}];
-        var json = [{name: "skateboard"}, {name: "drumetii"}, {name: "role"}, {name: "trotinete"}];
+        //var json = [{name: "skateboard"}, {name: "drumetii"}, {name: "role"}, {name: "trotinete"}];
+        var json = [{name: "telefoane-mobile"}];
         json.forEach(function (doc, index) {
-            Scanner.scanProducts(doc.name, function (success) {
-                if (success) {
-                    console.log("Finished category");
+            Scanner.scanProducts(doc.name, function (status) {
+                if (status == Scanner.ScanStatus.FOUND) {
+                    console.log("Finished category " + doc.name);
+                } else if (status == Scanner.ScanStatus.NOT_FOUND) {
+                    console.log("Could not finish category " + doc.name);
                 } else {
-                    console.log("Could not finish category");
+                    console.log("Failed to finish category" + doc.name);
                 }
             });
         });
     },
     /**
      * Parallelized GET @ http://www.emag.ro/{category}/p{index}/c?pc=60
+     * TODO rewrite this
      *
      * @param category e.g. telefoane-mobile
      * index -> given by html text of last .emg-pagination-no
@@ -81,49 +96,48 @@ var Scanner = {
                 console.log("Requested category " + category);
                 if (html.indexOf("human_check") > -1) {
                     console.log("F*** me I'm famous! -> CAPTCHA!");
-                    callback(false);
+                    callback([], false);
                 } else {
+                    var status;
                     var pages = getPaginatorPages(html, 'emg-pagination-no');
                     var json = grabProducts(html, category);
 
                     // FIXME this is somehow redundant but necessary
                     if (json.length > 0)
-                        Product.saveBulkProducts(json);
-                    else
-                        console.log("No products found/extracted for category: " + category);
-                    if (pages > 1) {
-                        for (var i = 2, count = 2, total = parseInt(pages); i <= total; i++) {
-                            request({
-                                url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
-                                method: "GET"
-                            }, function (error, response, html) {
-                                if (!error) {
-                                    // concatenate subsequent json arrays
-                                    console.log("Received html response " + count + " category: " + category);
-                                    if (html.indexOf("human_check") > -1) {
-                                        console.log("F*** me I'm famous! -> CAPTCHA!");
-                                        callback(false);
-                                    } else {
-                                        json = json.concat(grabProducts(html, category));
-                                        if (count++ == total) {
-                                            //json.forEach(function(doc, index) {
-                                            //    console.log("product " + index + ": ");
-                                            //    console.log(doc);
-                                            //});
-                                            if (json.length > 0) {
-                                                Product.saveBulkProducts(json);
-                                            } else
-                                                console.log("No products found/extracted for category: " + category);
-                                            callback(true);
+                        if (pages > 1) {
+                            for (var i = 2, count = 2, total = parseInt(pages); i <= total; i++) {
+                                request({
+                                    url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
+                                    method: "GET"
+                                }, function (error, response, html) {
+                                    if (!error) {
+                                        // concatenate subsequent json arrays
+                                        console.log("Received html response " + count + " category: " + category);
+                                        if (html.indexOf("human_check") > -1) {
+                                            console.log("F*** me I'm famous! -> CAPTCHA!");
+                                            callback([], Scanner.ScanStatus.FAILED);
+                                        } else {
+                                            json = json.concat(grabProducts(html, category));
+                                            if (count++ == total) {
+                                                //json.forEach(function(doc, index) {
+                                                //    console.log("product " + index + ": ");
+                                                //    console.log(doc);
+                                                //});
+                                                callback(json, Scanner.ScanStatus.FOUND);
+                                            }
                                         }
-                                    }
-                                } else
-                                    console.log("Scan product request error: " + error);
-                            });
+                                    } else
+                                        console.log("Scan product request error: " + error);
+                                });
+                            }
+                        } else {
+                            // only one page, so we finished already
+                            callback(json, Scanner.ScanStatus.FOUND);
                         }
-                    } else {
-                        // only one page, so finished already
-                        callback(true);
+                    else {
+                        // html/css changed, no need to make further requests
+                        console.log("No products found/extracted for category: " + category);
+                        callback([], Scanner.ScanStatus.NOT_FOUND);
                     }
                 }
             } else {

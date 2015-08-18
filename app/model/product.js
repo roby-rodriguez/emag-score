@@ -85,7 +85,7 @@ var Product = {
     saveBulkProducts: function (json) {
         // establish connection to db
         Database.connect().done(function (database) {
-                console.log("Started bulk update for category " + json[0].category);
+                console.log("Started bulk update");
                 // get (create) the collection
                 var col = database.collection('product');
                 // initialize the unordered batch
@@ -124,9 +124,8 @@ var Product = {
                     if (err)
                         console.log(err);
                     else
-                        console.log("Finished bulk update for category " + json[0].category + " -> matched: " + result.nMatched
-                            + ", inserted: " + result.nInserted + ", upserted: " + result.nUpserted + ", modified: "
-                            + result.nModified + ", removed: " + result.nRemoved);
+                        console.log("Finished bulk update -> matched: " + result.nMatched+ ", inserted: " + result.nInserted
+                            + ", upserted: " + result.nUpserted + ", modified: " + result.nModified + ", removed: " + result.nRemoved);
                 });
             }, function (reason) {
                 // handle onRejected
