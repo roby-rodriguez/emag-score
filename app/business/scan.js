@@ -25,8 +25,8 @@ var Scanner = {
      *
      * TODO implement some simple protection against CAPTCHAs -> delays/retry or smth
      */
-    scanEverything: function (callback) {
-        Category.getCategories(function (docs) {
+    scanEverything: function (callback, categories) {
+        function scanner(docs) {
             var processed = new Array();
             var failed = new Array();
             var notFound = new Array();
@@ -60,7 +60,14 @@ var Scanner = {
                     });
                 }
             });
-        });
+        }
+
+        // some voodoo stuff here but cool, check if this works
+        if (categories !== undefined) {
+            scanner(categories);
+        } else {
+            Category.getCategories(scanner);
+        }
     },
     testScanEverything: function () {
         //var json = [{name: "telefoane-mobile"}, {name: "laptopuri"}, {name: "tablete"}, {name: "procesoare"}, {name: "mediaplayere"}, {name: "carduri-memorie"}];
