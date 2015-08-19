@@ -57,13 +57,16 @@ angular.module('emagScoresApp').controller('ProductController', function($rootSc
             }, function(error) {
                 // display error message in UI
             });
-    }
+    };
 
     CategoryFactory.initCategory(function (data) {
         $scope.subcategory = data;
         $scope.retrieveTotalNrOfProducts();
     });
 
+    /**
+     * Listens to category changed events coming from category view
+     */
     $scope.$on('categoryChanged', function () {
         $scope.subcategory = CategoryFactory.getCategory();
         $scope.displayProducts();

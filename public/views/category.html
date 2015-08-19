@@ -9,7 +9,7 @@
         </div>
         <div class="col-sm-10 col-sm-10 col-md-10 col-lg-10">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search category...">
+                <input id="categoryInput" type="text" class="form-control" placeholder="Search category..." ng-model="search.keyword">
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="button">
                         <i class="fa fa-search"></i>
@@ -20,7 +20,7 @@
     </div>
 </li>
 <li>
-    <div ng-repeat="category in categories | orderBy: 'name' track by $index">
+    <div ng-repeat="category in interceptFilter((categories | filter:search.keyword)) | orderBy: 'name' track by $index" >
         <ul ng-class="getCategoryClass($index)" id="#{{category.name}}_main">
             <li>
                 <a type="button"
