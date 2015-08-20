@@ -105,6 +105,10 @@ body {
     float: right;
 }
 
+.emag-footer {
+    border: 1px solid #ddd;
+}
+
 .navbar-toggle {
     display:block;
     margin: 8px 15px 8px 5px;
