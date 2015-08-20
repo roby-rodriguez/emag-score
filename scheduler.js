@@ -21,11 +21,11 @@ var cronJob = cron.job("15 00 * * *", function(){
     function attempt(docs, indexObj) {
         setTimeout(function () {
             console.info('[SCANNER-JOB] attempt ' + indexObj.index + ' to finish scan: ' + new Date().toString());
-            Scanner.scanEverything(docs, function (failed, notFound) {
+            Scanner.scanEverything(function (failed, notFound) {
                 if (failed.length > 0 && indexObj.index++ <= NR_OF_ATTEMPTS)
                     attempt(failed, indexObj);
             });
-        }, (indexObj.index ^ 2) * 30 * 60 * 1000);
+        }, Math.pow(indexObj.index, 2) * 30 * 60 * 1000);
     }
     console.info('[SCANNER-JOB] started scan everything at: ' + new Date().toString());
     Scanner.scanEverything(function (failed, notFound) {
