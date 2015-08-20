@@ -37,21 +37,24 @@ router.get('/', function(req, res) {
  http://localhost:1337/api/products/:pageNr/:resultsPerPage
  http://localhost:1337/api/products/:title
  */
-router.get('/products/search/:pageNr/:resultsPerPage/:category', function(req, res) {
+router.get('/products/retrieve/:pageNr/:resultsPerPage/:category', function(req, res) {
     //var pageNr = req.params.pageNr;
     //var resultsPerPage = req.params.resultsPerPage;
     Product.findAllProducts(req, res)
 });
-router.get('/products/search/:pageNr/:resultsPerPage', function(req, res) {
+router.get('/products/retrieve/:pageNr/:resultsPerPage', function(req, res) {
     Product.findAllProducts(req, res)
 });
-router.get('/categories', Category.findAllCategories);
-router.get('/products/total/:category', function(req, res) {
+router.get('/products/search/:pageNr/:resultsPerPage/:title', function(req, res) {
+    Product.findProductsByTitle(req, res)
+});
+router.get('/products/total/category/:category', function(req, res) {
     Product.findTotalNrOfProducts(req, res)
 });
-router.get('/products/total', Product.findTotalNrOfProducts);
-router.get('/products/:title', Product.findProductsByTitle);
-
+router.get('/products/total/title/:title', function(req, res) {
+    Product.findTotalNrOfProducts(req, res)
+});
+router.get('/categories', Category.findAllCategories);
 
 // register routes -> all routes will be prefixed with /api
 app.use('/', router);
@@ -66,12 +69,3 @@ console.log("Magic happens on port 1337...");
 //Scanner.scanCategories();
 //Scanner.scanProducts("telefoane-mobile");
 //Scanner.testScanEverything();
-
-Scanner.scanEverything(function (failed, notFound) {
-    failed.forEach(function (doc, index) {
-       console.log("Remainder " + index  +": " + doc.name);
-    });
-    notFound.forEach(function (doc, index) {
-        console.log("Not found " + index  +": " + doc.name);
-    });
-});

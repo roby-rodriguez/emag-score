@@ -23,9 +23,25 @@ angular.module('emagScoresApp')
         };
     })
     .controller('ProductController', function($rootScope, $scope, $log, ProductFactory, ProductService, CategoryFactory) {
+        // current active browse type -> category nav/search
+        $scope.type = '';
+        $scope.search = { keyword : '' };
+        $scope.searchInputEnter = function (keyEvent) {
+            if (keyEvent.which === 13) {
+                $scope.type = 'title';
+                $scope.retrieveTotalNrOfProducts($scope.type, $scope.search.keyword);
+                // reset pagination
+                $rootScope.paginator.currentPage = 1;
+                $scope.displaySearchProducts();
+            }
+        };
+
         $scope.pageChanged = function() {
             $log.log("Changed to 2: " + $rootScope.paginator.currentPage);
-            $scope.displayProducts();
+            if ($scope.type === 'title')
+                $scope.displaySearchProducts();
+            else
+                $scope.displayProducts();
         };
 
         $scope.ratingStyleClass = function(ratingScore, index) {
@@ -51,28 +67,39 @@ angular.module('emagScoresApp')
                     // display error message in UI
                 });
         };
-        $scope.retrieveTotalNrOfProducts = function () {
-            ProductService.retrieveTotalNrOfProducts($scope.subcategory.name)
+        $scope.displaySearchProducts = function () {
+            ProductService.searchProducts($scope.search.keyword, $rootScope.paginator.currentPage, $rootScope.paginator.resultsPerPage)
+                .then(function (json) {
+                    // promise fulfilled
+                    $rootScope.products = json;
+                }, function(error) {
+                    // display error message in UI
+                });
+        };
+        $scope.retrieveTotalNrOfProducts = function (type, keyword) {
+            ProductService.retrieveTotalNrOfProducts({ type : type, keyword : keyword })
                 .then(function (total) {
                     // promise fulfilled
                     $rootScope.paginator.total = total;
-                    $scope.displayProducts();
                 }, function(error) {
                     // display error message in UI
                 });
         };
 
-        CategoryFactory.initCategory(function (data) {
+/*        CategoryFactory.initCategory(function (data) {
             $scope.subcategory = data;
-            $scope.retrieveTotalNrOfProducts();
-        });
+            $scope.retrieveTotalNrOfProducts('category', $scope.subcategory.name);
+        });*/
 
         /**
          * Listens to category changed events coming from category view
          */
         $scope.$on('categoryChanged', function () {
+            $scope.type = 'category';
             $scope.subcategory = CategoryFactory.getCategory();
+            $scope.retrieveTotalNrOfProducts($scope.type, $scope.subcategory.name);
+            // reset pagination
+            $rootScope.paginator.currentPage = 1;
             $scope.displayProducts();
-            $scope.retrieveTotalNrOfProducts();
         });
 });

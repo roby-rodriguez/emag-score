@@ -20,8 +20,12 @@ var Product = {
     findProductsByTitle: function(req, res) {
         console.log('findProductsByTitle: ' + req.params.title);
         Database.connect().done(function (database) {
+                var pageNr = req.params.pageNr;
+                var resultsPerPage = parseInt(req.params.resultsPerPage);
                 database.collection('product')
                     .find({name: { $regex: req.params.title, $options: 'i'}})
+                    .skip(pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0)
+                    .limit(resultsPerPage)
                     .toArray(function (err, docs) {
                     if (err) {
                         console.log('Error: ' + err);
@@ -69,6 +73,8 @@ var Product = {
                 var query;
                 if (typeof req.params.category !== 'undefined')
                     query = database.collection('product').find({category: req.params.category});
+                else if (typeof req.params.title !== 'undefined')
+                    query = database.collection('product').find({name: { $regex: req.params.title, $options: 'i'}});
                 else
                     query = database.collection('product').find();
                 query.count(function (err, count) {
