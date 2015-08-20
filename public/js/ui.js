@@ -17,13 +17,3 @@ $('#sidebar-navigation')
         if ($(e.target).hasClass('sidebar'))
             $("#page-wrapper").css("margin-left", "0px");
     });
-// todo this doesn't really work -> check
-$('#categoryInput')
-    .on('keyup', function () {
-        var val = this.value;
-        if (value.length === 0) {
-            $('.collapsible').each(function (doc) {
-                $('#' + doc._id).collapse('hide');
-            });
-        }
-    });

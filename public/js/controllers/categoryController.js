@@ -39,10 +39,14 @@ angular.module('emagScoresApp').controller('CategoryController', function($rootS
         return filteredCategories;
     };
 
+    /**
+     * Watch set on category search input value, collapses category
+     * navigation list when empty
+     */
     $scope.$watch('search.keyword', function (newVal, oldVal) {
         if (newVal !== undefined && newVal.length === 0) {
-            $('.collapsible').each(function (doc) {
-                $('#' + doc._id).collapse('hide');
+            $('ul.collapse').each(function (doc) {
+                $(this).collapse('hide');
             });
         }
     });
@@ -59,7 +63,7 @@ angular.module('emagScoresApp').controller('CategoryController', function($rootS
         if ($scope.collapsed && index > 5)
             return 'hidden';
         if (typeof addition !== 'undefined')
-            return 'nav' + addition;
+            return 'nav ' + addition;
         return 'nav';
     };
 
