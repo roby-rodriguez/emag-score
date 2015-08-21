@@ -21,15 +21,15 @@ angular.module('emagScoresApp')
             currentPage: 1,
             resultsPerPage: 5
         };
+        $rootScope.search = { keyword : '' };
     })
     .controller('ProductController', function($rootScope, $scope, $log, ProductFactory, ProductService, CategoryFactory) {
         // current active browse type -> category nav/search
-        $scope.type = '';
-        $scope.search = { keyword : '' };
+        //$scope.type = '';
         $scope.searchInputEnter = function (keyEvent) {
             if (keyEvent.which === 13) {
-                $scope.type = 'title';
-                $scope.retrieveTotalNrOfProducts($scope.type, $scope.search.keyword);
+                $rootScope.type = 'title';
+                $scope.retrieveTotalNrOfProducts($rootScope.type, $rootScope.search.keyword);
                 // reset pagination
                 $rootScope.paginator.currentPage = 1;
                 $scope.displaySearchProducts();
@@ -38,7 +38,7 @@ angular.module('emagScoresApp')
 
         $scope.pageChanged = function() {
             $log.log("Changed to 2: " + $rootScope.paginator.currentPage);
-            if ($scope.type === 'title')
+            if ($rootScope.type === 'title')
                 $scope.displaySearchProducts();
             else
                 $scope.displayProducts();
@@ -59,7 +59,7 @@ angular.module('emagScoresApp')
 
         $scope.emagBase = "http://www.emag.ro";
         $scope.displayProducts = function () {
-            ProductService.retrieveProducts($scope.subcategory.name, $rootScope.paginator.currentPage, $rootScope.paginator.resultsPerPage)
+            ProductService.retrieveProducts($rootScope.subcategory.name, $rootScope.paginator.currentPage, $rootScope.paginator.resultsPerPage)
                 .then(function (json) {
                     // promise fulfilled
                     $rootScope.products = json;
@@ -68,7 +68,7 @@ angular.module('emagScoresApp')
                 });
         };
         $scope.displaySearchProducts = function () {
-            ProductService.searchProducts($scope.search.keyword, $rootScope.paginator.currentPage, $rootScope.paginator.resultsPerPage)
+            ProductService.searchProducts($rootScope.search.keyword, $rootScope.paginator.currentPage, $rootScope.paginator.resultsPerPage)
                 .then(function (json) {
                     // promise fulfilled
                     $rootScope.products = json;
@@ -95,9 +95,9 @@ angular.module('emagScoresApp')
          * Listens to category changed events coming from category view
          */
         $scope.$on('categoryChanged', function () {
-            $scope.type = 'category';
-            $scope.subcategory = CategoryFactory.getCategory();
-            $scope.retrieveTotalNrOfProducts($scope.type, $scope.subcategory.name);
+            $rootScope.type = 'category';
+            $rootScope.subcategory = CategoryFactory.getCategory();
+            $scope.retrieveTotalNrOfProducts($rootScope.type, $rootScope.subcategory.name);
             // reset pagination
             $rootScope.paginator.currentPage = 1;
             $scope.displayProducts();
