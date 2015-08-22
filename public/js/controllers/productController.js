@@ -86,11 +86,6 @@ angular.module('emagScoresApp')
                 });
         };
 
-/*        CategoryFactory.initCategory(function (data) {
-            $scope.subcategory = data;
-            $scope.retrieveTotalNrOfProducts('category', $scope.subcategory.name);
-        });*/
-
         /**
          * Listens to category changed events coming from category view
          */
