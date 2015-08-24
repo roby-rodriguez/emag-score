@@ -1,71 +1,55 @@
-// server.js
-// check out https://scotch.io/tutorials/build-a-restful-api-using-node-and-express-4
-
 /**
- * About node.js:
- * http://stackoverflow.com/questions/1884724/what-is-node-js/6782438#6782438
+ * Emag-score application server main entry point.
+ * Mainly deals with configuration & routing.
  *
-Problems so far:
-    - structure the project, see following links:
-    https://scotch.io/tutorials/node-and-angular-to-do-app-application-organization-and-structure
-    http://stackoverflow.com/questions/13998793/structuring-a-nodejs-and-angular-js-app
-    http://stackoverflow.com/questions/14417592/node-js-difference-between-req-query-and-req-params
-    https://www.safaribooksonline.com/blog/2014/03/13/parameterized-routes-express-js/
-
-    SPAs:
-    https://scotch.io/tutorials/setting-up-a-mean-stack-single-page-application
-    Communication through files done by means of module.export, see:
-    http://openmymind.net/2012/2/3/Node-Require-and-Exports/
-*/
+ * Created by johndoe on 23.08.2015.
+ */
 
 // setup modules
-var express  = require('express');
-var app      = express();
-var Product  = require('./app/model/product');
-var Category  = require('./app/model/category');
-var Scanner  = require('./app/business/scan');
+var express     = require('express');
+var logger      = require('morgan');
+var bodyParser  = require('body-parser');
 
-// setup routing
-var router = express.Router();
+var app         = express();
 
-router.get('/', function(req, res) {
-   res.json({"message" : "Hello world!"});
+// log all requests with morgan
+app.use(logger('dev'));
+// use middleware to parse application/json
+app.use(bodyParser.json());
+
+// Cross-origin resource sharing (CORS) headers
+app.all('/*', function (req, res, next) {
+    // allow any origin
+    res.header("Access-Control-Allow-Origin", "*");
+    // allow only these methods
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    // custom headers for CORS
+    res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
+    if (req.method == 'OPTIONS') {
+        res.status(200).end();
+    } else {
+        next();
+    }
 });
 
 /*
-    REST api
- http://localhost:1337/api/products/:pageNr/:resultsPerPage
- http://localhost:1337/api/products/:title
+    Authentication/validation middleware
+    - check if token sent by client is valid
+    - applies only to secured routes (i.e. which require login)
  */
-router.get('/products/retrieve/:pageNr/:resultsPerPage/:category', function(req, res) {
-    //var pageNr = req.params.pageNr;
-    //var resultsPerPage = req.params.resultsPerPage;
-    Product.findAllProducts(req, res)
+app.all('/secured/*', [require('./app/middleware/validation')]);
+// load app routing
+app.use('/', require('./app/routing'));
+// if no route matched so far reply with 404
+app.use(function (req, res, next) {
+    var err = new Error('Not found');
+    err.status = 404;
+    next(err);
 });
-router.get('/products/retrieve/:pageNr/:resultsPerPage', function(req, res) {
-    Product.findAllProducts(req, res)
-});
-router.get('/products/search/:pageNr/:resultsPerPage/:title', function(req, res) {
-    Product.findProductsByTitle(req, res)
-});
-router.get('/products/total/category/:category', function(req, res) {
-    Product.findTotalNrOfProducts(req, res)
-});
-router.get('/products/total/title/:title', function(req, res) {
-    Product.findTotalNrOfProducts(req, res)
-});
-router.get('/categories', Category.findAllCategories);
 
-// register routes -> all routes will be prefixed with /api
-app.use('/', router);
 // set the static files location /public/img will be /img for users
 app.use(express.static(__dirname + '/public'));
-
-app.listen(1337);
-console.log("Magic happens on port 1337...");
-
-//Category.testSaveBulkCategories();
-//Product.testSaveBulkProducts();
-//Scanner.scanCategories();
-//Scanner.scanProducts("telefoane-mobile");
-//Scanner.testScanEverything();
+// start server
+app.listen(1337, function () {
+    console.log("Magic happens on port 1337...");
+});
