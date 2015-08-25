@@ -102,7 +102,7 @@ var Scanner = {
                 // first we need to find out the number of pages (1 req/page)
                 console.log("Requested category " + category);
                 if (html.indexOf("human_check") > -1) {
-                    console.log("F*** me I'm famous! -> CAPTCHA!");
+                    console.log("F*** me I'm famous! -> CAPTCHA! (category: " + category + " 1)");
                     callback([], false);
                 } else {
                     var status;
@@ -121,7 +121,7 @@ var Scanner = {
                                         // concatenate subsequent json arrays
                                         console.log("Received html response " + count + " category: " + category);
                                         if (html.indexOf("human_check") > -1) {
-                                            console.log("F*** me I'm famous! -> CAPTCHA!");
+                                            console.log("F*** me I'm famous! -> CAPTCHA! (category: " + category + " " + count + ")");
                                             callback([], Scanner.ScanStatus.FAILED);
                                         } else {
                                             json = json.concat(grabProducts(html, category));
