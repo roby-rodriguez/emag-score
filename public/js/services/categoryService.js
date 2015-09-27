@@ -4,7 +4,7 @@
 /**
  * Service for calling the categories REST API
  */
-angular.module('emagScoresApp').service('CategoryService', function($http, $q) {
+angular.module('emagScoreApp').service('CategoryService', function($http, $q) {
     var categoriesUrl = 'http://localhost:1337/categories';
 
     this.retrieveCategories = function () {

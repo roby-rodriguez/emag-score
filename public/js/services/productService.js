@@ -7,7 +7,7 @@
  * Links:
  * http://tylermcginnis.com/angularjs-factory-vs-service-vs-provider/
  */
-angular.module('emagScoresApp').service('ProductService', function($http, $q) {
+angular.module('emagScoreApp').service('ProductService', function($http, $q) {
     var productsUrl = 'http://localhost:1337/products';
 
     this.retrieveProducts = function (category, pageNr, resultsPerPage) {

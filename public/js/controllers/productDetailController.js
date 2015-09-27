@@ -1,7 +1,7 @@
 /**
  * Controller for product detail view
  */
-angular.module('emagScoresApp').controller('ProductDetailController', function($scope, ProductFactory) {
+angular.module('emagScoreApp').controller('ProductDetailController', function($scope, ProductFactory) {
     var vm = this;
 
     vm.product = ProductFactory.getProduct();

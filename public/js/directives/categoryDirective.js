@@ -4,7 +4,7 @@
  * 1) The *.bs.collapse callbacks cannot be placed in $(document).ready
  * because ready is called prior to angular.
  */
-angular.module('emagScoresApp')
+angular.module('emagScoreApp')
     /**
      * Some links for collapse:
      * http://stackoverflow.com/questions/18147338/twitter-bootstrap-3-0-icon-change-on-collapse

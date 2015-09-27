@@ -8,8 +8,9 @@
  * Links:
  * http://www.journaldev.com/6225/angular-js-routing-and-multiple-views-tutorial-example
  */
-var app = angular.module("emagScoresApp", [
+var app = angular.module("emagScoreApp", [
     'ngRoute',
+    'ngAnimate',
     'ui.bootstrap'
 ]);
 app.constant('ENDPOINT_URI', 'http://localhost:1337/');
@@ -34,6 +35,18 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/favorites.html',
             controller: 'FavoritesController',
             controllerAs: 'vm'
+        })
+        .when('/login', {
+            templateUrl: 'views/login.html',
+            controller: 'AuthController'
+        })
+        .when('/signin', {
+            templateUrl: 'views/signin.html',
+            controller: 'AuthController'
+        })
+        .when('/signup', {
+            templateUrl: 'views/signup.html',
+            controller: 'AuthController'
         })
         .otherwise({
             redirectTo: '/home'

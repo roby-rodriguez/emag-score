@@ -1,6 +1,6 @@
 {
-  "name": "EmagScores",
-  "namelower": "emag-scores",
+  "name": "EmagScore",
+  "namelower": "emag-score",
   "version": "0.0.1",
   "description": "Checker for product pricing history on emag.ro",
   "main": "server.js",
@@ -19,12 +19,23 @@
     "grunt-contrib-jshint"    : "~0.10.0",
     "grunt-contrib-nodeunit"  : "~0.4.1",
     "grunt-contrib-uglify"    : "~0.5.0",
-    "express"                 : "~4.7.2",
-    "mongodb"                 : "~1.4",
+    "express"                 : "^4.11.1",
+    "express-session"         : "^1.10.1",
+    "mongodb"                 : "*",
     "request"                 : "*",
     "cheerio"                 : "*",
     "q"                       : "*",
-    "cron"                    : "*"
+    "cron"                    : "*",
+    "passport"                : "*",
+    "passport-local"          : "*",
+    "bcrypt"                  : "*",
+    "body-parser"             : "*",
+    "cookie-parser"           : "*",
+    "express-jwt"             : "*",
+    "jsonwebtoken"            : "*",
+    "morgan"                  : "*",
+    "serve-favicon"           : "^2.2.0"
+
   },
   "scripts": {
     "postinstall": "bower install"

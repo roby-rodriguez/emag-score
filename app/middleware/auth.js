@@ -5,7 +5,7 @@
  * http://thejackalofjavascript.com/architecting-a-restful-node-js-app/
  */
 var jwt  = require('jwt-simple');
-var User = require('../model/User');
+var User = require('../model/user');
 
 var Auth = {
     login: function (req, res) {
@@ -13,22 +13,17 @@ var Auth = {
         var password = req.body.password || '';
 
         if (email == '' || password == '') {
-            res.status(401);
-            res.json({
-                "status": 401,
-                "message": "Invalid credentials"
-            });
-            return;
+            return reject(res);
         }
 
-        User.findByCredentials(email, password, function (user) {
+        User.findById(email, function (err, user) {
+            if (err) throw err;
             if (!user) {
-                res.status(401);
-                res.json({
-                    "status": 401,
-                    "message": "Invalid credentials"
-                });
-                return;
+                console.log('User not found: ' + email);
+                reject(res);
+            } else if (user.password != password) {
+                console.log('Wrong password: actual ' + password + ' expected ' + user.password);
+                reject(res);
             } else {
                 res.json(generateToken(user));
             }
@@ -36,17 +31,21 @@ var Auth = {
     }
 };
 
+function reject(res) {
+    res.status(401);
+    res.json({
+        "status": 401,
+        "message": "Invalid credentials"
+    });
+}
+
 function generateToken(user) {
     var expires = expiresIn(7); // 7 days
     var token = jwt.encode({
-        exp: expires
-    }, require('../config/secret')());
-
-    return {
-        token: token,
         expires: expires,
-        user: user
-    };
+        user: user.email
+    }, require('../config/secret')());
+    return token;
 }
 
 function expiresIn(numDays) {

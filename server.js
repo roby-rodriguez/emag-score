@@ -6,16 +6,39 @@
  */
 
 // setup modules
-var express     = require('express');
-var logger      = require('morgan');
-var bodyParser  = require('body-parser');
+var express         = require('express');
+var logger          = require('morgan');
+var bodyParser      = require('body-parser');
+var cookieParser    = require('cookie-parser');
+var passport        = require('passport');
+var session         = require('express-session');
+var jwt             = require('express-jwt');
+var favicon         = require('serve-favicon');
+// setup express
+var app             = express();
 
-var app         = express();
+require('./app/config/passport')(passport);
 
 // log all requests with morgan
 app.use(logger('dev'));
 // use middleware to parse application/json
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+// required for passport
+app.use(session({
+    secret: require('./app/config/secret')(),
+    //cookie: { secure: true }, // https needed for this option
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+//
+app.use(favicon(__dirname + '/public/resources/img/favicon.ico'));
+// set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/public'));
 
 // Cross-origin resource sharing (CORS) headers
 app.all('/*', function (req, res, next) {
@@ -37,9 +60,10 @@ app.all('/*', function (req, res, next) {
     - check if token sent by client is valid
     - applies only to secured routes (i.e. which require login)
  */
-app.all('/secured/*', [require('./app/middleware/validation')]);
+// app.all('/secured/*', require('./app/middleware/validation'));
+app.all('/secured/*', jwt({secret: require('./app/config/secret')()}));
 // load app routing
-app.use('/', require('./app/routing'));
+app.use('/', require('./app/routing/route'));
 // if no route matched so far reply with 404
 app.use(function (req, res, next) {
     var err = new Error('Not found');
@@ -47,8 +71,6 @@ app.use(function (req, res, next) {
     next(err);
 });
 
-// set the static files location /public/img will be /img for users
-app.use(express.static(__dirname + '/public'));
 // start server
 app.listen(1337, function () {
     console.log("Magic happens on port 1337...");
