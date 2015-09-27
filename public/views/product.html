@@ -6,6 +6,9 @@
             </div>
         </div>
         <div ng-show="products.length > 0">
+            <div class="alert alert-danger" ng-show="error">
+                <span>{{ error.message }}</span>
+            </div>
             <div class="row">
                 <div ng-controller="ProductController">
                     <div ng-include src="'templates/paginator.html'"></div>
@@ -28,7 +31,7 @@
                                 <a ng-href="#/productDetail" ng-click="setProduct(product)" class="btn btn-info btn-sm">
                                     <span class="fa fa-area-chart"></span> View price history
                                 </a>
-                                <a ng-href="#" class="btn btn-danger btn-sm">
+                                <a ng-href="" class="btn btn-danger btn-sm" ng-click="addFavorite(product)" authorization>
                                     <span class="fa fa-heart"></span> Add to favorites
                                 </a>
                             </div>

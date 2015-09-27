@@ -1,7 +1,7 @@
 /**
  * Created by johndoe on 21.09.2015.
  */
-angular.module('emagScoreApp').factory('AuthFactory', function ($http, $window) {
+angular.module('emagScoreApp').factory('AuthFactory', function ($window) {
     var auth = {};
 
     auth.setToken = function (tokenJson) {
@@ -47,4 +47,13 @@ angular.module('emagScoreApp').factory('AuthFactory', function ($http, $window) 
     };
 
     return auth;
+}).factory('TokenInjector', function (AuthFactory) {
+    return {
+        request: function (config) {
+            config.headers = config.headers || {};
+            if (AuthFactory.isAuthenticated())
+                config.headers['Authorization'] = 'Bearer ' + AuthFactory.getToken();
+            return config;
+        }
+    };
 });

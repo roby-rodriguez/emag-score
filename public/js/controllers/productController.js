@@ -57,6 +57,14 @@ angular.module('emagScoreApp')
             ProductFactory.setProduct(data);
         };
 
+        $scope.addFavorite = function (data) {
+            ProductService.addFavorite(data.pid, function () {
+                //TODO toggle css/text
+            }).error(function (err) {
+                $scope.error = err;
+            });
+        };
+
         $scope.emagBase = "http://www.emag.ro";
         $scope.displayProducts = function () {
             ProductService.retrieveProducts($rootScope.subcategory.name, $rootScope.paginator.currentPage, $rootScope.paginator.resultsPerPage)

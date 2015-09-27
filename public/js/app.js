@@ -14,7 +14,8 @@ var app = angular.module("emagScoreApp", [
     'ui.bootstrap'
 ]);
 app.constant('ENDPOINT_URI', 'http://localhost:1337/');
-app.config(function ($routeProvider) {
+app.config(function ($routeProvider, $httpProvider) {
+    $httpProvider.interceptors.push('TokenInjector');
     $routeProvider
         .when('/home', {
             templateUrl: 'views/home.html',

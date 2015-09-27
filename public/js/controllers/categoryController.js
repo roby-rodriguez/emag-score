@@ -89,6 +89,7 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
      * Used to toggle user category configuration
      */
     $scope.toggleConfigurable = function () {
+        //TODO add functionality
         console.log('HAHA');
     };
 
