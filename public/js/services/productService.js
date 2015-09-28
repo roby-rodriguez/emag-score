@@ -51,8 +51,8 @@ angular.module('emagScoreApp').service('ProductService', function($http, $q, Aut
             {
                 email: AuthFactory.currentUser(),
                 pid: productId
-            }).success(function(){
-                next();
+            }).success(function(info){
+                next(info);
             });
     };
 });
