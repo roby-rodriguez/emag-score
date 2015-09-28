@@ -109,6 +109,11 @@ body {
     border: 1px solid #ddd;
 }
 
+.jumbotron {
+    .jumbotron;
+    margin-top: 30px;
+}
+
 .navbar-toggle {
     display:block;
     margin: 8px 15px 8px 5px;

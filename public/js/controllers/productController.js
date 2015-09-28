@@ -12,7 +12,7 @@
  *
  * TODO controllers tend to clutter unnecessary business logic, refactor to utilities/services
  */
-angular.module('emagScoresApp')
+angular.module('emagScoreApp')
     .run(function ($rootScope) {
         //TODO products doesn't have to be on root scope
         $rootScope.products = [];
@@ -55,6 +55,14 @@ angular.module('emagScoresApp')
 
         $scope.setProduct = function(data) {
             ProductFactory.setProduct(data);
+        };
+
+        $scope.addFavorite = function (data) {
+            ProductService.addFavorite(data.pid, function () {
+                //TODO toggle css/text
+            }).error(function (err) {
+                $scope.error = err;
+            });
         };
 
         $scope.emagBase = "http://www.emag.ro";

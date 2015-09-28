@@ -12,7 +12,7 @@
  * http://stackoverflow.com/questions/26924221/mongodb-journal-in-write-concern
  * http://stackoverflow.com/questions/5373198/mongodb-relationships-embed-or-reference
  */
-// you first have to enable 'emagscores-dev' by  calling 'use emagscores-dev' in mongo shell
+// you first have to enable 'emagscore-dev' by  calling 'use emagscore-dev' in mongo shell
 var Database  = require('./database');
 var DateUtil = require('../common/dateUtil');
 

@@ -1,7 +1,7 @@
 /**
  * Factory for creating the 'category' object that is used for category.html
  */
-angular.module('emagScoresApp').factory('CategoryFactory', function() {
+angular.module('emagScoreApp').factory('CategoryFactory', function() {
     var subcategory = {};
 
     return {

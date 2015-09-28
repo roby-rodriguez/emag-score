@@ -1,5 +1,5 @@
 {
-  "name": "emag-scores",
+  "name": "emag-score",
   "version": "0.0.1",
   "authors": [
     "RobyRodriguez"
@@ -10,6 +10,7 @@
     "animate.css": "latest",
     "angular": "latest",
     "angular-route": "latest",
+    "angular-animate": "latest",
     "angular-bootstrap": "latest",
     "morris.js": "latest",
     "metisMenu": "latest"

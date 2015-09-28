@@ -7,7 +7,7 @@
  * stackoverflow.com/questions/18775011/angular-how-can-i-watch-a-filter-result-array-for-changes-from-the-controller#answer-18775306
  * stackoverflow.com/questions/16050533/how-can-i-obtain-the-result-array-of-an-angular-filter-expression-in-a-varia#answer-16050534
  */
-angular.module('emagScoresApp').controller('CategoryController', function($rootScope, $scope, CategoryService, CategoryFactory) {
+angular.module('emagScoreApp').controller('CategoryController', function($rootScope, $scope, CategoryService, CategoryFactory) {
     $scope.search = {};
     $scope.categories = [];
     //$scope.filteredCategories = [];
@@ -83,6 +83,14 @@ angular.module('emagScoresApp').controller('CategoryController', function($rootS
      */
     $scope.toggleShowCategories = function () {
         $scope.collapsed = !$scope.collapsed;
+    };
+
+    /**
+     * Used to toggle user category configuration
+     */
+    $scope.toggleConfigurable = function () {
+        //TODO add functionality
+        console.log('HAHA');
     };
 
     /**

@@ -7,7 +7,7 @@
  * Links:
  * http://tylermcginnis.com/angularjs-factory-vs-service-vs-provider/
  */
-angular.module('emagScoresApp').service('ProductService', function($http, $q) {
+angular.module('emagScoreApp').service('ProductService', function($http, $q, AuthFactory) {
     var productsUrl = 'http://localhost:1337/products';
 
     this.retrieveProducts = function (category, pageNr, resultsPerPage) {
@@ -44,5 +44,15 @@ angular.module('emagScoresApp').service('ProductService', function($http, $q) {
             deferred.reject('An error has occured.');
         });
         return deferred.promise;
+    };
+
+    this.addFavorite = function (productId, next) {
+        return $http.post('/secured/favorites/add',
+            {
+                email: AuthFactory.currentUser(),
+                pid: productId
+            }).success(function(){
+                next();
+            });
     };
 });

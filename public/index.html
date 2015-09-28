@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>EmagScores Showcase</title>
+    <title>EmagScore Showcase</title>
     <!-- Bootstrap Core CSS -->
     <link href="libs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- MetisMenu CSS -->
@@ -21,7 +21,7 @@
     <link href="libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <div id="wrapper" ng-app="emagScoresApp">
+    <div id="wrapper" ng-app="emagScoreApp">
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <!-- Home link -->
@@ -33,7 +33,7 @@
                     <span class="icon-bar"></span>
                 </button>
             </div>
-            <a class="navbar-brand" href="#/home">Emag Scores</a>
+            <a class="navbar-brand" href="#/home">Emag Score</a>
             <!-- Top-bar navigation -->
             <div ng-include src="'views/topMenu.html'"></div>
             <!-- Side-bar navigation -->
@@ -64,7 +64,9 @@
     <!-- Angular UI -->
     <script src="libs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <!-- Angular Routing -->
-    <script src="libs/angular-route/angular-route.js"></script>
+    <script src="libs/angular-route/angular-route.min.js"></script>
+    <!-- Angular Animate -->
+    <script src="libs/angular-animate/angular-animate.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- Metis Menu Plugin JavaScript -->
@@ -80,14 +82,18 @@
     <script src="js/controllers/productController.js"></script>
     <script src="js/controllers/productDetailController.js"></script>
     <script src="js/controllers/categoryController.js"></script>
+    <script src="js/controllers/authController.js"></script>
     <!-- Custom Angular Factories -->
     <script src="js/factories/productFactory.js"></script>
     <script src="js/factories/categoryFactory.js"></script>
+    <script src="js/factories/authFactory.js"></script>
     <!-- Custom Angular Services -->
     <script src="js/services/productService.js"></script>
     <script src="js/services/categoryService.js"></script>
+    <script src="js/services/authService.js"></script>
     <!-- Custom Angular Directives -->
     <script src="js/directives/categoryDirective.js"></script>
+    <script src="js/directives/authDirective.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/ui.js"></script>
 </body>

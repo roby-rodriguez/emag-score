@@ -9,7 +9,7 @@ var Database = {
     connect: function () {
         if (!this.db) {
             var deferred = Q.defer();
-            MongoClient.connect("mongodb://localhost:27017/emagscores-dev", function (err, database) {
+            MongoClient.connect("mongodb://localhost:27017/emagscore-dev", function (err, database) {
                 if (err) deferred.reject(new Error(err));
                 else deferred.resolve(database);
             });
