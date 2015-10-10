@@ -58,8 +58,8 @@ angular.module('emagScoreApp')
         };
 
         $scope.addFavorite = function (data) {
-            ProductService.addFavorite(data.pid, function () {
-                //TODO toggle css/text
+            ProductService.addFavorite(data.pid, function (info) {
+                $scope.info = info;
             }).error(function (err) {
                 $scope.error = err;
             });
