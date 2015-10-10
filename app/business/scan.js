@@ -11,21 +11,44 @@
  */
 var request = require('request');
 var cheerio = require('cheerio');
+var util = require('util');
+var EventEmitter = require('events').EventEmitter;
 var Product  = require('../model/product');
 var Category  = require('../model/category');
+var CaptchaSolver = require('./captchaSolver');
+var Constants = require('../config/local.env');
 
 var Scanner = {
+    ProductsHtmlType : { GRID: 0, FIGURE: 1 },
     ScanStatus: { FOUND: 0, NOT_FOUND: 1, FAILED: -1 },
-    baseUrl: "http://www.emag.ro",
     productsUrl: function () {
-        return this.baseUrl + "/$0/p$1/c?pc=60";
+        return Constants.EMAG_BASE_URL + "/$0/p$1/c?pc=60";
     },
     /**
      * Parallelized GETs on all product categories
      *
+     * !De facut un array de subcategorii, evit nesting-ul si duplicatele
+     *
      * TODO implement some simple protection against CAPTCHAs -> delays/retry or smth
      */
-    scanEverything: function (callback, categories) {
+    scanEverything1: function (callback, categories) {
+        /**
+         * Gets the total number of subcategories of the given category array
+         *
+         * @param docs category array
+         * @returns {number} total number of subcategories
+         */
+        function getTotal(docs) {
+            var total = 0;
+            docs.forEach(function (doc) {
+                if (doc.subcategories != null) {
+                    doc.subcategories.forEach(function () {
+                        ++total;
+                    });
+                }
+            });
+            return total;
+        }
         function scanner(docs) {
             var processed = new Array();
             var failed = new Array();
@@ -67,6 +90,209 @@ var Scanner = {
             scanner(categories);
         } else {
             Category.getCategories(scanner);
+        }
+    },
+    /**
+     * Scans all products
+     *
+     * @param done callback for when ready
+     * @param categories [optional] categories to scan, otherwise those from db are used
+     */
+    scanEverything: function (done, categories) {
+        function captchaCheck(html) {
+            return html.indexOf("human_check") > -1;
+        }
+        function extractCaptchaItem(html) {
+
+            return ;
+        }
+        function getAllSubcategories(categories) {
+            var result = [], visited = [];
+            for (var i = categories.length - 1; i >= 0; i--) {
+                for (var j = categories[i].subcategories.length - 1; j >= 0; j--) {
+                    if (visited.indexOf(categories[i].subcategories[j].name) == -1) {
+                        visited.push(categories[i].subcategories[j].name);
+                        result.push(categories[i].subcategories[j]);
+                    }
+                }
+            }
+            return result;
+        }
+        function ProductScanner(url, category, manager) {
+            EventEmitter.call(this);
+            this.url = url;
+            this.category = category;
+            this.manager = manager;
+        }
+        util.inherits(ProductScanner, EventEmitter);
+        ProductScanner.prototype.scan = function (starter) {
+            var self = this;
+            request.get(this.url, function(error, response, html) {
+                if (error)
+                    self.manager.emit('error', error, self);
+                else if (captchaCheck(html)) {
+                    console.log('\n' + html + '\n');
+                    self.manager.emit('captcha', extractCaptchaItem(html), self);
+                }
+                else {
+                    if (starter) {
+                        var total = getPaginatorPages(html, 'emg-pagination-no');
+                    }
+                    var json = grabProducts(html, self.category);
+                    self.emit('ready', json, total);
+                }
+            });
+            return this;
+        };
+        function CategoryScanner(category, manager) {
+            EventEmitter.call(this);
+            this.category = category;
+            this.manager = manager;
+            this.products = [];
+        }
+        util.inherits(CategoryScanner, EventEmitter);
+        /**
+         * check out these links:
+         * http://stackoverflow.com/questions/14020697/nodejs-how-to-handle-event-listening-between-objects
+         * http://stackoverflow.com/questions/26465358/how-to-make-an-eventemitter-listen-to-another-eventemitter-in-node-js
+         */
+        CategoryScanner.prototype.scan = function () {
+            console.log('Scanning category: ' + this.category.name);
+            var self = this;
+            var first = new ProductScanner(Scanner.productsUrl().replace("$0", this.category.name).replace("$1", 1),
+                this.category.title, this.manager);
+            first
+                .scan(true)
+                .on('ready', function (json, total) {
+                    self.total = self.total || total;
+                    if (self.total > 1) {
+                        for (var finishedCounter = 1, i = 2; i <= self.total; i++) {
+                            var additional = new ProductScanner(Scanner.productsUrl().replace("$0", self.category.name)
+                                .replace("$1", i), self.category.title, self.manager);
+                            additional
+                                .scan()
+                                .on('ready', function (json) {
+                                    self.products = self.products.concat(json);
+                                    if (++finishedCounter == self.total) {
+                                        self.emit('ready', self.products);
+                                        console.log('Finished category: ' + self.category.name);
+                                    }
+                                });
+                        }
+                    } else {
+                        self.emit('ready', json);
+                        console.log('Finished category: ' + self.category.name);
+                    }
+                });
+            return this;
+        };
+        function ScanManager(categories) {
+            EventEmitter.call(this);
+            this.categories = categories;
+            this.products = [];
+            this.encounteredCaptcha = false;
+        }
+        util.inherits(ScanManager, EventEmitter);
+        ScanManager.prototype.launch = function () {
+            console.log('Started scan');
+            var self = this;
+            for (var finishedCounter = 0, i = 0; i < this.categories.length; i++) {
+                var scanner = new CategoryScanner(this.categories[i], this);
+                scanner
+                    .scan()
+                    .on('ready', function (json) {
+                        self.products = self.products.concat(json);
+                        if (++finishedCounter == self.categories.length) {
+                            self.emit('ready');
+                            console.log('Finished scan');
+                            Product.saveBulkProducts(self.products);
+                        }
+                    });
+            }
+            return this;
+        };
+        function parallel(docs) {
+            var processed = [], failed = [], notFound = [];
+            var subcategories = getAllSubcategories(docs);
+            var manager = new ScanManager(subcategories);
+            manager
+                .launch()
+                .on('error', function (error, product) {
+                    //todo add to failed/notFound
+                    console.error('Encountered error at product: ' + product);
+                })
+                .on('captcha', function (captchaItem, product) {
+                    // call captcha solver service and on success rescan
+                    console.error('Encountered captcha at product: ' + product);
+                    if (manager.encounteredCaptcha) {
+                        // someone else has already encountered a captcha, wait for it to be solved
+                        // todo figure out how to pause all the other product scanners while solver is working on a solution
+                        // todo - solution 1: push {product, captchaItem} into an array -> if first solver fails then resume until CAPTCHA_SOLVE_ATTEMPTS reached
+                    } else {
+                        CaptchaSolver.solve(captchaItem, function (error, result) {
+                            if (error) {
+                                //todo see above
+                            } else {
+                                if (result) // rescan
+                                    product.scan();
+                            }
+                        });
+                    }
+                })
+                .on('ready', function () {
+                    // todo fillup processed / failed / notFound
+                    done(processed, failed, notFound);
+                    console.log('Finished everything');
+                });
+        }
+        function sequential(docs) {
+            var processed = [], failed = [], notFound = [];
+            var json = [];
+            var subcategories = getAllSubcategories(docs);
+            (function iterativeSubcategoryScan(done) {
+                var category = subcategories.pop();
+                console.log('started subcat: ' + category.title);
+                var total;
+                var i = 1;
+                (function iterativeProductScan(index, done) {
+                    request(Scanner.productsUrl().replace("$0", category.name).replace("$1", index.toString()),
+                        function(error, response, html) {
+                            if (error) {
+                                throw error;//todo
+                            } else {
+                                if (captchaCheck(html)) {
+                                    console.error('Encountered captcha'); //todo
+                                } else {
+                                    total = total || getPaginatorPages(html, 'emg-pagination-no');
+                                    json = json.concat(grabProducts(html, category.title));
+                                    if (index++ < total)
+                                        setTimeout(iterativeProductScan(index, done), 3000);
+                                    else
+                                        done();
+                                }
+                            }
+                        }
+                    );
+                }) (i, function finishedProductsCallback() {
+                    console.log('finished all products for category: ' + category.title);
+                    if (subcategories.length > 0)
+                        iterativeSubcategoryScan(finishedProductsCallback);
+                    else
+                        done();
+                });
+            }) (function () {
+                console.log('finished all');
+                Product.saveBulkProducts(json);
+                // todo fillup processed / failed / notFound
+                done(processed, failed, notFound);
+            });
+        }
+
+        var method = (Constants.SCANNER_METHOD_FAST? parallel : sequential);
+        if (categories !== undefined) {
+            method(categories);
+        } else {
+            Category.getCategories(method);
         }
     },
     testScanEverything: function () {
@@ -113,10 +339,7 @@ var Scanner = {
                     if (json.length > 0)
                         if (pages > 1) {
                             for (var i = 2, count = 2, total = parseInt(pages); i <= total; i++) {
-                                request({
-                                    url: Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()),
-                                    method: "GET"
-                                }, function (error, response, html) {
+                                request(Scanner.productsUrl().replace("$0", category).replace("$1", i.toString()), function (error, response, html) {
                                     if (!error) {
                                         // concatenate subsequent json arrays
                                         console.log("Received html response " + count + " category: " + category);
@@ -159,46 +382,54 @@ var Scanner = {
      * or <li><a href like '%/%s/c?%s%'
      */
     scanCategories: function() {
-        request({
-            url: Scanner.baseUrl,
-            method: "GET"
-        }, function(error, response, html) {
+        function alreadyAdded(subcategory, json) {
+            for (var i = json.length - 1; i >= 0; i--)
+                if (json[i].name == subcategory)
+                    return true;
+            return false;
+        }
+        function trimHref(link) {
+            link = link.substr(1);
+            return link.substr(0, link.indexOf('/'));
+        }
+        /**
+         * if href != js:void && (href contains c? || parent class contains child) -> add to subcategory
+         *
+         * @param link
+         * @returns {*|boolean}
+         */
+        function validSubcategory(link) {
+            var parentClass = link.parent().attr('class');
+            var linkText = link.attr('href');
+            return (parentClass && parentClass.indexOf('child') > -1) || (linkText && linkText.indexOf('?c') > -1);
+        }
+        request(Constants.EMAG_BASE_URL, function(error, response, html) {
             if (!error) {
                 // grab main menu nav tag
-                var json = new Array();
+                var json = [];
                 var navMenuIndex = html.indexOf('<nav id="emg-mega-menu"');
                 if (navMenuIndex > -1) {
                     html = html.substring(navMenuIndex);
                     html = html.substring(0, html.indexOf('</nav>') + 6);
                     var $ = cheerio.load(html);
-                    $('li a[href="javascript:void(0)"]').each(function () {
-                        var title = $(this).text(), lastParent;
+                    $('a[href="javascript:void(0)"]').each(function () {
+                        var self = $(this), title = self.text(), subcategories = [];
                         // skip recommended products section
-                        if (title.toLowerCase().indexOf('recomand') == -1) {
-                            $(this).parent().find('a').each(function () {
-                                var parentClass = $(this).parent().attr('class');
-                                if (typeof parentClass !== 'undefined'
-                                    && (parentClass.indexOf('title') > -1 || parentClass.indexOf('child') > -1)) {
-                                    // found parent/expandable or child/leaf category
-                                    // now extract category following {baseUrl}/{category}/c?{%s}
-                                    var name = extractCategory($(this).attr('href'));
-                                    if (name != null) {
-                                        // sometimes links to unrelated/not grab-able pages may come up - should be avoided
-                                        if (parentClass.indexOf('title') > -1) lastParent = name;
-                                        if (parentClass.indexOf('child') > -1) {
-                                            json[json.length - 1].subcategories = json[json.length - 1].subcategories || [];
-                                            json[json.length - 1].subcategories.push({
-                                                "name": name,
-                                                "title": $(this).text()
-                                            });
-                                        } else {
-                                            json.push({
-                                                "name": name,
-                                                "title": $(this).text()
-                                            });
-                                        }
-                                    }
+                        if (title.toLowerCase().indexOf('recom') == -1) {
+                            self.parent().find('a').each(function () {
+                                var link = $(this), subcategoryName = trimHref(link.attr('href'));
+                                if (validSubcategory(link) && !alreadyAdded(subcategoryName, subcategories)) {
+                                    subcategories.push({
+                                        name: subcategoryName,
+                                        title: link.text()
+                                    });
                                 }
+                            });
+                        }
+                        if (subcategories.length) {
+                            json.push({
+                                title: title,
+                                subcategories: subcategories
                             });
                         }
                     });
@@ -214,27 +445,54 @@ var Scanner = {
     }
 };
 
-/**
- *  Extracts products from html and saves to db as json
- *
- * @param html the html holding the products grid
- */
-function grabProducts(html, category) {
-    var json = new Array();
-    html = html.substring(html.indexOf('<div id="products-holder"'));
-    html = html.substring(0, html.indexOf('<section') - 1);
+function getFigureProducts(html, category) {
+    var json = [];
     var $ = cheerio.load(html);
+    $('figure').each(function () {
+        var pid = extractNumber($(this).attr('id'));
+        var imgLinkObj = $(this).find('img');
+        var imgLink = './resources/img/product_na.jpg';
+        if (imgLinkObj.length) imgLink = imgLinkObj.attr('data-src') || imgLinkObj.attr('src');
+        var figCaptionObject = $(this).find('figcaption');
+        if (figCaptionObject.length) {
+            var productLinkObject = figCaptionObject.find('a'), productLink, name;
+            if (productLinkObject.length) {
+                productLink = productLinkObject.attr('href');
+                name = productLinkObject.attr('title');
+            }
+            var priceObject = figCaptionObject.find('div.emg-listing-price');
+            if (priceObject.length) {
+                var price = Number(priceObject.find('.money-int').text().replace(/[^0-9]/, '')) + Number(priceObject.find('.money-decimal').text()) / 100;
+                var currency = priceObject.find('.money-currency').text().toLowerCase();
+            }
+        }
+        json.push({
+            name: name,
+            pid: pid,
+            price: price,
+            currency: currency,
+            category: category,
+            productLink: productLink,
+            imageLink: imgLink,
+            active: 1
+        });
+        // todo delete this debug print
+        var last = json[json.length - 1];
+        console.log("> "+ last.name + " " + last.pid + " " + last.price + " " + last.currency + " "
+            + last.category + " " + last.productLink + " " + last.imageLink + " " + last.active);
+    });
+    return json;
+}
 
+function getGridProducts(html, category) {
+    var json = [];
+    var $ = cheerio.load(html);
     $('.product-holder-grid').each(function () {
         var pid = $(this).find("input[name='product[]']");
         if (pid.length) pid = pid.val();
         var productObj = $(this).find('a.link_imagine');
         if (productObj.length) {
             var name = productObj.attr('title');
-            var brand = getWord(2, name);
-        }
-        if (name.indexOf("ASUS ZenFone") > -1){
-            name = name.substring(1);
         }
         var priceObject = $(this).find('span.price-over');
         if (priceObject.length) {
@@ -244,8 +502,7 @@ function grabProducts(html, category) {
         var productLink = productObj.attr('href');
         var imgLinkObj = $(this).find('img');
         var imgLink = './resources/img/product_na.jpg';
-        //todo refine the line below -> search all attrs and extract text containing '.jpeg'/'.jpg'
-        if (imgLinkObj.length) imgLink = imgLinkObj.attr('data-src');
+        if (imgLinkObj.length) imgLink = imgLinkObj.attr('data-src') || imgLinkObj.attr('src');
         var ratingObject = $(this).find('.holder-rating');
         if (ratingObject.length) {
             var ratingScore = ratingObject.find('.star-rating-small-progress');
@@ -259,7 +516,12 @@ function grabProducts(html, category) {
             if (ratings != null) ratings = Number(ratings.join(""));
         }
         var available = $(this).find('.stare-disp-listing');
-        if (available.length) available = available.text().indexOf('In stoc') > -1 ? 1 : 0;
+        if (available.length) {
+            if (available.text().toLowerCase().indexOf('indisponibil') > -1 || available.text().toLowerCase().indexOf('epuizat') > -1)
+                available = 0;
+            else
+                available = 1;
+        }
         var details = $(this).find('.feedback-right-msg');
         if (details.length) details = details.text().trim().replace(/\s+/g, " ");
         //todo don't add empty json strings/values, else it leads to circular ref errors
@@ -268,7 +530,6 @@ function grabProducts(html, category) {
             "pid": pid,
             "price": price,
             "currency": currency,
-            "brand": brand,
             "category": category,
             "productLink": productLink,
             "imageLink": imgLink,
@@ -277,8 +538,54 @@ function grabProducts(html, category) {
             "active": available,
             "details": details
         });
+        // todo delete this debug print
+        var last = json[json.length - 1];
+        console.log("> "+ last.name + " " + last.pid + " " + last.price + " " + last.currency + " "
+            + last.category + " " + last.productLink + " " + last.imageLink + " " + last.ratingScore + " "
+            + last.nrRatings + " " + last.active + " " + last.details);
     });
     return json;
+}
+
+/**
+ *  Extracts products from html
+ *
+ * @param html the html holding the products grid
+ * @param category the category to which the products belong to
+ * @returns {Array} products json array
+ */
+function grabProducts(html, category) {
+    var productsHtmlTypeObject = extractProductsHtml(html), json;
+    if (Scanner.ProductsHtmlType.GRID == productsHtmlTypeObject.type)
+        json = getGridProducts(productsHtmlTypeObject.html, category);
+    else if (Scanner.ProductsHtmlType.FIGURE == productsHtmlTypeObject.type)
+        json = getFigureProducts(productsHtmlTypeObject.html, category);
+    else
+        json = [];
+    return json;
+}
+
+/**
+ * Determines products area and extracts coresp. html
+ * It uses very weak heuristics.
+ *
+ * @param html entire html content
+ * @returns {object} products area html and type
+ */
+function extractProductsHtml(html) {
+    var productsHtmlTypeObject = {};
+    if (html.indexOf('<div id="products-holder"') > -1) {
+        html = html.substring(html.indexOf('<div id="products-holder"'));
+        html = html.substring(0, html.indexOf('<section') - 1);
+        productsHtmlTypeObject.html = html;
+        productsHtmlTypeObject.type = Scanner.ProductsHtmlType.GRID;
+    } else if (html.indexOf('<section class="emg-col8 emg-center-container">') > -1) {
+        html = html.substring(html.indexOf('<section class="emg-col8 emg-center-container">'));
+        html = html.substring(0, html.substring(1).indexOf('<section'));
+        productsHtmlTypeObject.html = html;
+        productsHtmlTypeObject.type = Scanner.ProductsHtmlType.FIGURE;
+    }
+    return productsHtmlTypeObject;
 }
 
 /**
@@ -286,12 +593,23 @@ function grabProducts(html, category) {
  *
  * @param html
  * @param paginatorCss
- * @returns {Blob|ArrayBuffer|string|Query}
+ * @returns {Number}
  */
 function getPaginatorPages(html, paginatorCss) {
     var index = html.lastIndexOf(paginatorCss);
     html = html.slice(index);
-    return html.match(/\d+/)[0];
+    return extractNumber(html);
+}
+
+/**
+ * Extracts a number from string
+ *
+ * @param html
+ * @returns {Number}
+ */
+function extractNumber(html) {
+    var found = html.match(/\d+/);
+    return found? found[0] : 0;
 }
 
 /**
@@ -315,24 +633,6 @@ function extractCategory(linkText) {
  */
 function getWord(n, text) {
     return text.split(" ")[n];
-}
-
-/**
- * Gets the total number of subcategories of the given category array
- *
- * @param docs category array
- * @returns {number} total number of subcategories
- */
-function getTotal(docs) {
-    var total = 0;
-    docs.forEach(function (doc) {
-        if (doc.subcategories != null) {
-            doc.subcategories.forEach(function () {
-                ++total;
-            });
-        }
-    });
-    return total;
 }
 
 module.exports = Scanner;

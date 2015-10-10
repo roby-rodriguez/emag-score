@@ -4,11 +4,11 @@
 var Database  = require('./database');
 
 var Category = {
-    getCategories: function (callback) {
+    getCategories: function (callback, finishedCallback) {
         Database.connect().done(function (database) {
                 database.collection('category').find()
                     .toArray(function (err, docs) {
-                        callback(docs);
+                        callback(docs, finishedCallback);
                     });
             }, function (reason) {
                 // handle onRejected
@@ -56,10 +56,9 @@ var Category = {
                 // iterate documents to update
                 json.forEach(function (doc, index, array) {
                     // update entry if found, else freshly insert new entry
-                    batch.find({name: doc.name}).upsert().updateOne(
+                    batch.find({title: doc.title}).upsert().updateOne(
                         {
                             $set  : {
-                                name: doc.name,
                                 title: doc.title,
                                 subcategories: doc.subcategories
                             }

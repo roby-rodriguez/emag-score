@@ -2,6 +2,7 @@
  * Emag-score application server main entry point.
  * Mainly deals with configuration & routing.
  *
+ * todo adjust bodyParser to http://stackoverflow.com/questions/5710358/how-to-get-post-a-query-in-express-js-node-js#answer-20132867
  * Created by johndoe on 23.08.2015.
  */
 
@@ -75,3 +76,6 @@ app.use(function (req, res, next) {
 app.listen(1337, function () {
     console.log("Magic happens on port 1337...");
 });
+
+//require('./app/business/scan').scanEverything(function () {});
+//require('./app/business/scan').scanCategories();
