@@ -20,8 +20,8 @@
     </div>
 </li>
 <li>
-    <div ng-repeat="category in interceptFilter((categories | filter:search.keyword)) | orderBy: 'name' track by $index" >
-        <ul ng-class="getCategoryClass($index)" id="#{{category.name}}_main">
+    <div ng-repeat="category in interceptFilter((categories | filter:search.keyword)) | orderBy: 'title' track by $index" >
+        <ul ng-class="getCategoryClass($index)" id="#{{category._id}}_main">
             <li>
                 <a type="button"
                    data-toggle="collapse"

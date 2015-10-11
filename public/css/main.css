@@ -114,6 +114,11 @@ body {
     margin-top: 30px;
 }
 
+.panel-body {
+    .panel-body;
+    height: 500px;
+}
+
 .navbar-toggle {
     display:block;
     margin: 8px 15px 8px 5px;

@@ -78,10 +78,6 @@ var Category = {
                 console.log(reason);
             }
         );
-    },
-    testSaveBulkCategories: function () {
-        var categoriesString = '[{"name":"laptopuri-accesorii","title":"Laptopuri si accesorii"},{"name":"laptopuri","title":"Laptop / Notebook","parent":"laptopuri-accesorii"},{"name":"genti","title":"Genti","parent":"laptopuri-accesorii"}]';
-        this.saveBulkCategories(JSON.parse(categoriesString));
     }
 };
 

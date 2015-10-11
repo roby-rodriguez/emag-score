@@ -74,7 +74,6 @@ var User = {
         console.log('User.addFavorite: ' + req.body.pid + ' by ' + req.body.email);
         Database.connect().done(function (database) {
                 database.collection('product')
-                    //TODO add request parameter
                     .findOne({pid: req.body.pid}, function (err, product) {
                         if (err) {
                             console.log('Error: ' + err);
