@@ -100,11 +100,22 @@ var Scanner = {
      */
     scanEverything: function (done, categories) {
         function captchaCheck(html) {
-            return html.indexOf("human_check") > -1;
+            return html.indexOf("captcha") > -1;
         }
-        function extractCaptchaItem(html) {
-
-            return ;
+        function extractRecaptchaChallenge(html, callback) {
+            console.log('\n' + html + '\n');
+            request.get(Constants.RECAPTCHA_CHALLENGE_BASE_URL + Constants.EMAG_RECAPTCHA_PUBLIC_KEY, function(error, response, html) {
+                if (error)
+                    callback(error, null);
+                else {
+                    var $ = cheerio.load(html);
+                    var recaptchaChallenge = $('input#recaptcha_challenge_field').val();
+                    if (!recaptchaChallenge)
+                        callback(new Error('recaptcha_challenge_field not found'), null);
+                    else
+                        callback(null, recaptchaChallenge);
+                }
+            });
         }
         function getAllSubcategories(categories) {
             var result = [], visited = [];
@@ -131,10 +142,14 @@ var Scanner = {
                 if (error)
                     self.manager.emit('error', error, self);
                 else if (captchaCheck(html)) {
-                    console.log('\n' + html + '\n');
-                    self.manager.emit('captcha', extractCaptchaItem(html), self);
-                }
-                else {
+                    extractRecaptchaChallenge(html, function (error, challenge) {
+                        if (error)
+                            self.manager.emit('error', error, self);
+                        else {
+                            self.manager.emit('captcha', challenge, self);
+                        }
+                    });
+                } else {
                     if (starter) {
                         var total = getPaginatorPages(html, 'emg-pagination-no');
                     }
@@ -189,8 +204,14 @@ var Scanner = {
         function ScanManager(categories) {
             EventEmitter.call(this);
             this.categories = categories;
+            // products successfully processed
             this.products = [];
+            // flag to limit the solving process to as few attepts as necessary
             this.encounteredCaptcha = false;
+            // queue of products blocked by captcha, waiting for solution, who will then continue with a rescan
+            this.captchaQueue = [];
+            // keep track of number of attempts of solving the captcha challenge
+            this.scanAttempts = 0;
         }
         util.inherits(ScanManager, EventEmitter);
         ScanManager.prototype.launch = function () {
@@ -221,20 +242,32 @@ var Scanner = {
                     //todo add to failed/notFound
                     console.error('Encountered error at product: ' + product);
                 })
-                .on('captcha', function (captchaItem, product) {
+                .on('captcha', function (challenge, product) {
                     // call captcha solver service and on success rescan
                     console.error('Encountered captcha at product: ' + product);
                     if (manager.encounteredCaptcha) {
-                        // someone else has already encountered a captcha, wait for it to be solved
-                        // todo figure out how to pause all the other product scanners while solver is working on a solution
-                        // todo - solution 1: push {product, captchaItem} into an array -> if first solver fails then resume until CAPTCHA_SOLVE_ATTEMPTS reached
+                        // someone else has already encountered a captcha, enqueue product/challenge combination and wait for it to be solved
+                        manager.captchaQueue.push({ product: product, recaptchaChallenge: challenge });
                     } else {
-                        CaptchaSolver.solve(captchaItem, function (error, result) {
+                        manager.encounteredCaptcha = true;
+                        CaptchaSolver.solve(challenge, function handleCaptchaResponse(error, result) {
                             if (error) {
-                                //todo see above
+                                // try again with next challenge in queue
+                                if (++manager.scanAttempts <= Constants.CAPTCHA_SOLVE_ATTEMPTS) {
+                                    CaptchaSolver.solve(manager.captchaQueue[manager.scanAttempts].recaptchaChallenge,
+                                        handleCaptchaResponse);
+                                } else {
+                                    // well, most likely the online solving service is not working properly - abort
+                                }
                             } else {
-                                if (result) // rescan
+                                if (result) {
+                                    // rescan current and queued products
                                     product.scan();
+                                    while (manager.captchaQueue.length) {
+                                        var item = manager.captchaQueue.pop();
+                                        item.product.scan();
+                                    }
+                                }
                             }
                         });
                     }
@@ -266,7 +299,7 @@ var Scanner = {
                                     total = total || getPaginatorPages(html, 'emg-pagination-no');
                                     json = json.concat(grabProducts(html, category.title));
                                     if (index++ < total)
-                                        setTimeout(iterativeProductScan(index, done), 3000);
+                                        setTimeout(iterativeProductScan(index, done), Constants.SCANNER_METHOD_SEQUENTIAL_TIMEOUT * 1000);
                                     else
                                         done();
                                 }

@@ -11,7 +11,7 @@ var Constants = require('../config/local.env') ;
 
 var CaptchaSolver = {
     ag: new Antigate(Constants.CAPTCHA_SERVICE_APP_KEY),
-    solve: function (item, callback) {
+    solve: function (recaptchaChallenge, callback) {
         // fake some headers
         var headers = {
             'User-Agent'        : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36',
@@ -34,59 +34,27 @@ var CaptchaSolver = {
             }
         }
         /**
-         * Extracts recaptcha challenge key which acts like an extra safety check
-         * todo alternately extract json object, but this way is faster, event though maybe unsafer
-         *
-         * @param html recaptcha html
-         * @returns {string} recaptcha challenge key
-         */
-        function extractRecaptchaChallengeField(html) {
-            if (html && html.indexOf('RecaptchaState') > -1) {
-                var arr = html.split('\'');
-                for (var i = 0; i < arr.length; i++) {
-                    if (i && arr[i - 1].indexOf('challenge') > -1)
-                        return arr[i];
-                }
-            }
-        }
-        /**
          * Call antigate (online captcha solving service) and upon response post received data to source for
          * captcha validation
-         *
-         * todo make this fancy with deferred?
          */
-        request('https://www.google.com/recaptcha/api/challenge?k=' + item.challenge, function (error, response, html) {
-            if (error) {
-                console.error('Error (recaptcha challenge - public key - response): ' + error);
+        CaptchaSolver.ag.processFromURL(Constants.RECAPTCHA_IMAGE_BASE_URL + recaptchaChallenge, function (error, text) {
+            console.log('Captcha challenge: ' + recaptchaChallenge);
+            if (error || !text) {
+                console.log('Error (antigate): ' + error);
+                // todo 2 when captcha service fails to solve
                 callback(error, null);
             } else {
-                var recaptchaResponseField = extractRecaptchaChallengeField(html);
-                if (recaptchaResponseField) {
-                    // todo 1 figure what you need to send to antigate so that they can find out the solution
-                    CaptchaSolver.ag.processFromURL(item.url, function (error, text) {
-                        console.log('Captcha url: ' + item.url);
-                        if (error || !text) {
-                            console.log('Error (antigate): ' + error);
-                            // todo 2 when captcha service fails to solve
-                        }
-                        else {
-                            // post captcha to main site and continue rip
-                            request(options(recaptchaResponseField, text), function (error, response, body) {
-                                if (error) {
-                                    console.error('Error (validate captcha post): ' + error);
-                                    // todo 3 when captcha service solution is wrong
-                                    callback(error, null);
-                                } else {
-                                    console.info('Captcha challenge solved');
-                                    callback(null, {});
-                                }
-                            })
-                        }
-                    });
-                } else {
-                    console.error('Error (recaptcha challenge - public key - could not extract key): ' + error);
-                    callback(error, null);
-                }
+                // post captcha to main site and continue rip
+                request(options(recaptchaChallenge, text), function (error, response, body) {
+                    if (error) {
+                        console.error('Error (validate captcha post): ' + error);
+                        // todo 3 when captcha service solution is wrong - check out what error codes we get from emag
+                        callback(error, null);
+                    } else {
+                        console.info('Captcha challenge solved');
+                        callback(null, {});
+                    }
+                })
             }
         });
     }
