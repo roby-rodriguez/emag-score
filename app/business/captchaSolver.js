@@ -12,6 +12,8 @@ var Constants = require('../config/local.env') ;
 var CaptchaSolver = {
     ag: new Antigate(Constants.CAPTCHA_SERVICE_APP_KEY),
     solve: function (recaptchaChallenge, callback) {
+        // define solving method, online or testing
+        var solvingMethod = Constants.CAPTCHA_SERVICE_OFFLINE? testSolveManually : CaptchaSolver.ag.processFromURL;
         // fake some headers
         var headers = {
             'User-Agent'        : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36',
@@ -33,11 +35,20 @@ var CaptchaSolver = {
                 }
             }
         }
+        function testSolveManually(url, callback) {
+            console.log ('Input captcha solution for: ' + url);
+            process.stdin.resume();
+            process.stdin.setEncoding('utf8');
+            process.stdin.on('data', function (solutionText) {
+                solutionText = solutionText.toString().trim();
+                callback(null, solutionText);
+            });
+        }
         /**
          * Call antigate (online captcha solving service) and upon response post received data to source for
          * captcha validation
          */
-        CaptchaSolver.ag.processFromURL(Constants.RECAPTCHA_IMAGE_BASE_URL + recaptchaChallenge, function (error, text) {
+        solvingMethod(Constants.RECAPTCHA_IMAGE_BASE_URL + recaptchaChallenge, function (error, text) {
             console.log('Captcha challenge: ' + recaptchaChallenge);
             if (error || !text) {
                 console.log('Error (antigate): ' + error);

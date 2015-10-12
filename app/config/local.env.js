@@ -20,6 +20,10 @@ module.exports = {
     SCANNER_METHOD_FAST: true,
     /** interval of time in seconds elapsed between subsequent grab product requests */
     SCANNER_METHOD_SEQUENTIAL_TIMEOUT: 3,
+    /** maximum number of product pages allowed per category scan (some exceed 150 pages and are rather irrelevant) */
+    SCANNER_MAX_CATEGORY_SIZE: 20,
+    /** use online captcha solving service or enter solution by hand (used for testing) */
+    CAPTCHA_SERVICE_OFFLINE: true,
     /** online captcha solving service app key */
     CAPTCHA_SERVICE_APP_KEY: '',
     /** number of attempts of solving the captcha challenge */

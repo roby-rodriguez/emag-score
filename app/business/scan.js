@@ -100,10 +100,10 @@ var Scanner = {
      */
     scanEverything: function (done, categories) {
         function captchaCheck(html) {
-            return html.indexOf("captcha") > -1;
+            return html.indexOf("human_check") > -1;
         }
         function extractRecaptchaChallenge(html, callback) {
-            console.log('\n' + html + '\n');
+            // console.log('\n' + html + '\n');
             request.get(Constants.RECAPTCHA_CHALLENGE_BASE_URL + Constants.EMAG_RECAPTCHA_PUBLIC_KEY, function(error, response, html) {
                 if (error)
                     callback(error, null);
@@ -180,7 +180,11 @@ var Scanner = {
                 .scan(true)
                 .on('ready', function (json, total) {
                     self.total = self.total || total;
-                    if (self.total > 1) {
+                    if (self.total > Constants.SCANNER_MAX_CATEGORY_SIZE) {
+                        self.emit('ready', []);
+                        console.log('Ignoring/Finished category: ' + self.category.name);
+                        // todo update category delete or set irrelevant
+                    } else if (self.total > 1) {
                         for (var finishedCounter = 1, i = 2; i <= self.total; i++) {
                             var additional = new ProductScanner(Scanner.productsUrl().replace("$0", self.category.name)
                                 .replace("$1", i), self.category.title, self.manager);
@@ -321,11 +325,11 @@ var Scanner = {
             });
         }
 
-        var method = (Constants.SCANNER_METHOD_FAST? parallel : sequential);
+        var scanMethod = (Constants.SCANNER_METHOD_FAST? parallel : sequential);
         if (categories !== undefined) {
-            method(categories);
+            scanMethod(categories);
         } else {
-            Category.getCategories(method);
+            Category.getCategories(scanMethod);
         }
     },
     testScanEverything: function () {
