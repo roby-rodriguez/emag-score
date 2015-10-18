@@ -23,6 +23,7 @@
     "express-session"         : "^1.10.1",
     "mongodb"                 : "*",
     "request"                 : "*",
+    "socks5-http-client"      : "*",
     "cheerio"                 : "*",
     "antigate"                : "*",
     "q"                       : "*",

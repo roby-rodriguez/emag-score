@@ -10,6 +10,10 @@
  * http://stackoverflow.com/questions/13906357/making-multiple-requests-and-passing-them-to-a-template-express-node-js-fb
  */
 var request = require('request');
+//todo refactor this into a npm package -> implement native support for ruby sources
+var Agent = require('socks5-http-client/lib/Agent');
+Agent.keepAlive = true;
+Agent.keepAliveMsecs = 100000;
 var cheerio = require('cheerio');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -103,7 +107,7 @@ var Scanner = {
             return html.indexOf("human_check") > -1;
         }
         function extractRecaptchaChallenge(html, callback) {
-            // console.log('\n' + html + '\n');
+            //console.log('\n' + html + '\n');
             request.get(Constants.RECAPTCHA_CHALLENGE_BASE_URL + Constants.EMAG_RECAPTCHA_PUBLIC_KEY, function(error, response, html) {
                 if (error)
                     callback(error, null);
@@ -138,7 +142,15 @@ var Scanner = {
         util.inherits(ProductScanner, EventEmitter);
         ProductScanner.prototype.scan = function (starter) {
             var self = this;
-            request.get(this.url, function(error, response, html) {
+            // the requests are forwarded to the peasant proxy router which directs them into the tor circuits
+            request({
+                url: this.url,
+                agentClass: Agent,
+                agentOptions: {
+                    socksHost: '127.0.0.1',
+                    socksPort: 9999
+                }
+            }, function(error, response, html) {
                 if (error)
                     self.manager.emit('error', error, self);
                 else if (captchaCheck(html)) {
