@@ -73,7 +73,7 @@ app.use(function (req, res, next) {
 });
 
 // start server
-app.listen(1337, function () {
+app.listen(process.env.PORT, process.env.IP, function () {
     console.log("Magic happens on port 1337...");
 });
 

@@ -60,7 +60,7 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
      */
     $scope.getCategoryClass = function(index, addition) {
         // todo parametrise constant by checking out device display size
-        if ($scope.collapsed && index > 5)
+        if ($scope.collapsed && index > 2)
             return 'hidden';
         if (typeof addition !== 'undefined')
             return 'nav ' + addition;

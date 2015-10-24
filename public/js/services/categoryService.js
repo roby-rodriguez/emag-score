@@ -5,7 +5,7 @@
  * Service for calling the categories REST API
  */
 angular.module('emagScoreApp').service('CategoryService', function($http, $q) {
-    var categoriesUrl = 'http://localhost:1337/categories';
+    var categoriesUrl = 'https://emag-score-roby-rodriguez.c9.io/categories';
 
     this.retrieveCategories = function () {
         var deferred = $q.defer();

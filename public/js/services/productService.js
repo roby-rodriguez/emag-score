@@ -8,7 +8,7 @@
  * http://tylermcginnis.com/angularjs-factory-vs-service-vs-provider/
  */
 angular.module('emagScoreApp').service('ProductService', function($http, $q, AuthFactory) {
-    var productsUrl = 'http://localhost:1337/products';
+    var productsUrl = 'https://emag-score-roby-rodriguez.c9.io/products';
 
     this.retrieveProducts = function (category, pageNr, resultsPerPage) {
         var deferred = $q.defer();

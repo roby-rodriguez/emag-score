@@ -2,7 +2,7 @@
  * Created by johndoe on 20.09.2015.
  */
 angular.module('emagScoreApp').service('AuthService', function($http, AuthFactory) {
-    var baseUrl = 'http://localhost:1337/';
+    var baseUrl = 'https://emag-score-roby-rodriguez.c9.io/';
 
     // this used to use deferred
     this.login = function (user, next) {

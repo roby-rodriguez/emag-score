@@ -5,10 +5,26 @@ var Database  = require('./database');
 
 var Category = {
     getCategories: function (callback, finishedCallback) {
+        /**
+         * Filter out categories and return a set of subcategory names used in the
+         * construction of the grab product page URL.
+         */
+        function getAllSubcategories(categories) {
+            var result = [], visited = [];
+            for (var i = categories.length - 1; i >= 0; i--) {
+                for (var j = categories[i].subcategories.length - 1; j >= 0; j--) {
+                    if (visited.indexOf(categories[i].subcategories[j].name) == -1) {
+                        visited.push(categories[i].subcategories[j].name);
+                        result.push(categories[i].subcategories[j]);
+                    }
+                }
+            }
+            return result;
+        }
         Database.connect().done(function (database) {
                 database.collection('category').find()
                     .toArray(function (err, docs) {
-                        callback(docs, finishedCallback);
+                        callback(getAllSubcategories(docs), finishedCallback);
                     });
             }, function (reason) {
                 // handle onRejected
@@ -34,12 +50,6 @@ var Category = {
                     {$sort: {size:-1}}
                 ], function (err, docs) {
                     console.log('findAllCategories (sort by nr of subcategories): ' + docs.length);
-                    /* docs.forEach(function (doc, index, array) {
-                        console.log(doc.title);
-                        doc.subcategories.forEach(function (doc, index, array) {
-                            console.log("\t" + doc.title);
-                        });
-                    }); */
                     res.jsonp(docs);
                 }
             );

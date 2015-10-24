@@ -14,6 +14,8 @@ var CaptchaSolver = {
     solve: function (recaptchaChallenge, callback) {
         // define solving method, online or testing
         var solvingMethod = Constants.CAPTCHA_SERVICE_OFFLINE? testSolveManually : CaptchaSolver.ag.processFromURL;
+        // uncomment next line when captcha ready
+        solvingMethod = dummySolver;
         // fake some headers
         var headers = {
             'User-Agent'        : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36',
@@ -43,6 +45,9 @@ var CaptchaSolver = {
                 solutionText = solutionText.toString().trim();
                 callback(null, solutionText);
             });
+        }
+        function dummySolver(url, callback) {
+            callback(new Error('DummySolver: Could not solve captcha'), null);
         }
         /**
          * Call antigate (online captcha solving service) and upon response post received data to source for
