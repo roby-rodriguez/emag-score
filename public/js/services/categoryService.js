@@ -4,13 +4,11 @@
 /**
  * Service for calling the categories REST API
  */
-angular.module('emagScoreApp').service('CategoryService', function($http, $q) {
-    var categoriesUrl = 'https://emag-score-roby-rodriguez.c9.io/categories';
-
+angular.module('emagScoreApp').service('CategoryService', function($http, $q, Environment) {
     this.retrieveCategories = function () {
         var deferred = $q.defer();
         $http({
-            url: categoriesUrl
+            url: Environment.apiEndpoint + '/categories'
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {

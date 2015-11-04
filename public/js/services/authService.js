@@ -1,8 +1,8 @@
 /**
  * Created by johndoe on 20.09.2015.
  */
-angular.module('emagScoreApp').service('AuthService', function($http, AuthFactory) {
-    var baseUrl = 'https://emag-score-roby-rodriguez.c9.io/';
+angular.module('emagScoreApp').service('AuthService', function($http, AuthFactory, Environment) {
+    var baseUrl = Environment.apiEndpoint;
 
     // this used to use deferred
     this.login = function (user, next) {

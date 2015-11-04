@@ -72,9 +72,12 @@ app.use(function (req, res, next) {
     next(err);
 });
 
+process.env.PORT = process.env.PORT || 1337;
+process.env.IP = process.env.IP || 'localhost';
+
 // start server
 app.listen(process.env.PORT, process.env.IP, function () {
-    console.log("Magic happens on port 1337...");
+    console.log("Magic happens on port " + process.env.PORT + "...");
 });
 
 //require('./app/business/scan').scanEverything(function () {});

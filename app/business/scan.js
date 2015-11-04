@@ -87,7 +87,7 @@ var Scanner = {
                             if (starter) {
                                 var total = getPaginatorPages(html, 'emg-pagination-no');
                             }
-                            var json = grabProducts(html, self.category.title);
+                            var json = grabProducts(html, self.category.name);
                             self.emit('ready', json, total);
                         }
                     });
@@ -265,7 +265,7 @@ var Scanner = {
                                 finishedCallback(docs);
                             } else {
                                 total = total || getPaginatorPages(html, 'emg-pagination-no');
-                                json = json.concat(grabProducts(html, category.title));
+                                json = json.concat(grabProducts(html, category.name));
                                 if (index++ < total)
                                     setTimeout(iterativeProductScan(index, done), Constants.SCANNER_METHOD_SEQUENTIAL_TIMEOUT * 1000);
                                 else
