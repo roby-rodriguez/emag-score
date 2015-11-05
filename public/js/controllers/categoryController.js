@@ -8,6 +8,7 @@
  * stackoverflow.com/questions/16050533/how-can-i-obtain-the-result-array-of-an-angular-filter-expression-in-a-varia#answer-16050534
  */
 angular.module('emagScoreApp').controller('CategoryController', function($rootScope, $scope, CategoryService, CategoryFactory) {
+    var MAX_VISIBLE_CATEGORIES = 3;
     $scope.search = {};
     $scope.categories = [];
     //$scope.filteredCategories = [];
@@ -31,7 +32,7 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
      * @returns {*} filtered categories
      */
     $scope.interceptFilter = function (filteredCategories) {
-        if (filteredCategories.length <= 5) {
+        if (filteredCategories.length <= MAX_VISIBLE_CATEGORIES) {
             filteredCategories.forEach(function (doc) {
                 $('#' + doc._id).collapse('show');
             });
@@ -60,7 +61,7 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
      */
     $scope.getCategoryClass = function(index, addition) {
         // todo parametrise constant by checking out device display size
-        if ($scope.collapsed && index > 2)
+        if ($scope.collapsed && index >= MAX_VISIBLE_CATEGORIES)
             return 'hidden';
         if (typeof addition !== 'undefined')
             return 'nav ' + addition;
