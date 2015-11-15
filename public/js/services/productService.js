@@ -8,12 +8,10 @@
  * http://tylermcginnis.com/angularjs-factory-vs-service-vs-provider/
  */
 angular.module('emagScoreApp').service('ProductService', function($http, $q, AuthFactory, Environment) {
-    var productsUrl = Environment.apiEndpoint + '/products';
-
     this.retrieveProducts = function (category, pageNr, resultsPerPage) {
         var deferred = $q.defer();
         $http({
-            url: productsUrl + '/retrieve/' + pageNr + '/' + resultsPerPage + '/' + category
+            url: Environment.retrieveProductsUrl + pageNr + '/' + resultsPerPage + '/' + category
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {
@@ -25,7 +23,7 @@ angular.module('emagScoreApp').service('ProductService', function($http, $q, Aut
     this.searchProducts = function (keyword, pageNr, resultsPerPage) {
         var deferred = $q.defer();
         $http({
-            url: productsUrl + '/search/' + pageNr + '/' + resultsPerPage + '/' + keyword
+            url: Environment.searchProductsUrl + pageNr + '/' + resultsPerPage + '/' + keyword
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {
@@ -37,7 +35,7 @@ angular.module('emagScoreApp').service('ProductService', function($http, $q, Aut
     this.retrieveTotalNrOfProducts = function (obj) {
         var deferred = $q.defer();
         $http({
-            url: productsUrl + '/total/' + obj.type + '/' + obj.keyword
+            url: Environment.countProductsUrl + obj.type + '/' + obj.keyword
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {
@@ -47,7 +45,7 @@ angular.module('emagScoreApp').service('ProductService', function($http, $q, Aut
     };
 
     this.addFavorite = function (productId, next) {
-        return $http.post('/secured/favorites/add',
+        return $http.post(Environment.addFavoriteUrl,
             {
                 email: AuthFactory.currentUser(),
                 pid: productId

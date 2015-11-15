@@ -8,7 +8,7 @@ angular.module('emagScoreApp').service('CategoryService', function($http, $q, En
     this.retrieveCategories = function () {
         var deferred = $q.defer();
         $http({
-            url: Environment.apiEndpoint + '/categories'
+            url: Environment.categoriesUrl
         }).success(function(json){
             deferred.resolve(json);
         }).error(function () {

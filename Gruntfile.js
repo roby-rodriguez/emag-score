@@ -1,5 +1,7 @@
 module.exports = function (grunt) {
 
+    //TODO put watches on the sources for generated files
+
     // Project configuration.
     grunt.initConfig({
         ngconstant: {
@@ -10,21 +12,21 @@ module.exports = function (grunt) {
             },
             development: {
                 options: {
-                    dest: './public/js/config/constant.js'
+                    dest: './public/js/config/generated/constant.js'
                 },
-                constants: {
-                    Environment: {
-                        apiEndpoint: 'http://localhost:1337'
+                constants: function () {
+                    return {
+                        Environment: require('./public/js/config/local.env')
                     }
                 }
             },
             production: {
                 options: {
-                    dest: './public/js/config/constant.js'
+                    dest: './public/js/config/generated/constant.js'
                 },
-                constants: {
-                    Environment: {
-                        apiEndpoint: 'https://emag-score-roby-rodriguez.c9.io'
+                constants: function () {
+                    return {
+                        Environment: require('./public/js/config/prod.env')
                     }
                 }
             }

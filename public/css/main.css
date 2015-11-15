@@ -16,6 +16,7 @@ body {
 }
 
 #page-wrapper {
+    position: relative;
     padding: 0 15px;
     min-height: 568px;
     background-color: #fff;
@@ -23,7 +24,7 @@ body {
 
 @media(min-width:768px) {
     #page-wrapper {
-        position: inherit;
+        position: relative;
         margin: 0 0 0 250px;
         padding: 0 30px;
         border-left: 1px solid #e7e7e7;
@@ -394,4 +395,29 @@ table.dataTable thead .sorting:after {
 
 .panel-yellow a:hover {
     color: #df8a13;
+}
+
+.ajax-loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -16px; /* -1 * image width / 2 */
+    margin-top: -16px; /* -1 * image height / 2 */
+    display: block;
+}
+
+.ajax-loader-category {
+    display: none;
+    position: relative;
+    bottom: -32px;
+}
+
+.ajax-loader-product {
+    display: none;
+    position: absolute;
+    height: 92%;
+    width: 96%;
+    z-index: 1100;
+    background-color: lightgray;
+    opacity: .7;
 }

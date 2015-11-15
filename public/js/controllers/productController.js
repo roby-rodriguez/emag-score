@@ -13,35 +13,18 @@
  * TODO controllers tend to clutter unnecessary business logic, refactor to utilities/services
  */
 angular.module('emagScoreApp')
-    .run(function ($rootScope) {
-        //TODO products doesn't have to be on root scope
-        $rootScope.products = [];
-        $rootScope.paginator = {
-            maxPages: 5,
-            currentPage: 1,
-            resultsPerPage: 5
-        };
-        $rootScope.search = { keyword : '' };
-    })
     .controller('ProductController', function($rootScope, $scope, $log, ProductFactory, ProductService, CategoryFactory) {
         // current active browse type -> category nav/search
-        //$scope.type = '';
-        $scope.searchInputEnter = function (keyEvent) {
-            if (keyEvent.which === 13) {
-                $rootScope.type = 'title';
-                $scope.retrieveTotalNrOfProducts($rootScope.type, $rootScope.search.keyword);
-                // reset pagination
-                $rootScope.paginator.currentPage = 1;
-                $scope.displaySearchProducts();
-            }
+        $scope.getProducts = function () {
+            return ProductFactory.getProducts();
+        };
+        $scope.getPaginator = function () {
+            return ProductFactory.getPaginator();
         };
 
         $scope.pageChanged = function() {
-            $log.log("Changed to 2: " + $rootScope.paginator.currentPage);
-            if ($rootScope.type === 'title')
-                $scope.displaySearchProducts();
-            else
-                $scope.displayProducts();
+            $log.log("Changed to 2: " + ProductFactory.getPaginator().currentPage);
+            $scope.displayProducts();
         };
 
         $scope.ratingStyleClass = function(ratingScore, index) {
@@ -65,30 +48,22 @@ angular.module('emagScoreApp')
             });
         };
 
-        $scope.emagBase = "http://www.emag.ro";
         $scope.displayProducts = function () {
-            ProductService.retrieveProducts($rootScope.subcategory.name, $rootScope.paginator.currentPage, $rootScope.paginator.resultsPerPage)
+            ProductService.retrieveProducts(CategoryFactory.getCategory().name, ProductFactory.getPaginator().currentPage, ProductFactory.getPaginator().resultsPerPage)
                 .then(function (json) {
                     // promise fulfilled
-                    $rootScope.products = json;
+                    // $scope.products = json;
+                    ProductFactory.setProducts(json);
                 }, function(error) {
                     // display error message in UI
                 });
         };
-        $scope.displaySearchProducts = function () {
-            ProductService.searchProducts($rootScope.search.keyword, $rootScope.paginator.currentPage, $rootScope.paginator.resultsPerPage)
-                .then(function (json) {
-                    // promise fulfilled
-                    $rootScope.products = json;
-                }, function(error) {
-                    // display error message in UI
-                });
-        };
+
         $scope.retrieveTotalNrOfProducts = function (type, keyword) {
             ProductService.retrieveTotalNrOfProducts({ type : type, keyword : keyword })
                 .then(function (total) {
                     // promise fulfilled
-                    $rootScope.paginator.total = total;
+                    ProductFactory.setTotalPages(total);
                 }, function(error) {
                     // display error message in UI
                 });
@@ -96,13 +71,14 @@ angular.module('emagScoreApp')
 
         /**
          * Listens to category changed events coming from category view
+         * todo get rid of this - doesn't work first time
          */
         $scope.$on('categoryChanged', function () {
-            $rootScope.type = 'category';
-            $rootScope.subcategory = CategoryFactory.getCategory();
-            $scope.retrieveTotalNrOfProducts($rootScope.type, $rootScope.subcategory.name);
+            $scope.type = 'category';
+            $scope.subcategory = CategoryFactory.getCategory();
+            $scope.retrieveTotalNrOfProducts($scope.type, $scope.subcategory.name);
             // reset pagination
-            $rootScope.paginator.currentPage = 1;
+            ProductFactory.setCurrentPage(1);
             $scope.displayProducts();
         });
 });

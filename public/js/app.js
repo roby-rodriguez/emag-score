@@ -8,14 +8,16 @@
  * Links:
  * http://www.journaldev.com/6225/angular-js-routing-and-multiple-views-tutorial-example
  */
-var app = angular.module("emagScoreApp", [
+angular.module("emagScoreApp", [
     'ngRoute',
     'ngAnimate',
     'ui.bootstrap',
     'emagScoreConstant'
-]);
-app.config(function ($routeProvider, $httpProvider) {
+]).run(function ($rootScope, Environment) {
+    $rootScope.Environment = Environment;
+}).config(function ($routeProvider, $httpProvider) {
     $httpProvider.interceptors.push('TokenInjector');
+    $httpProvider.interceptors.push('RequestLoadingInterceptor');
     $routeProvider
         .when('/home', {
             templateUrl: 'views/home.html',
@@ -27,9 +29,24 @@ app.config(function ($routeProvider, $httpProvider) {
             controller: 'ProductController',
             controllerAs: 'vm'
         })
+        .when('/productSearch', {
+            templateUrl: 'views/product.html',
+            controller: 'ProductSearchController',
+            controllerAs: 'vm'
+        })
         .when('/productDetail', {
             templateUrl: 'views/productDetail.html',
             controller: 'ProductDetailController',
+            controllerAs: 'vm'
+        })
+        .when('/trendingLow', {
+            templateUrl: 'views/product.html',
+            controller: 'ProductTrendController',
+            controllerAs: 'vm'
+        })
+        .when('/trendingHigh', {
+            templateUrl: 'views/product.html',
+            controller: 'ProductTrendController',
             controllerAs: 'vm'
         })
         .when('/favorites', {

@@ -47,13 +47,4 @@ angular.module('emagScoreApp').factory('AuthFactory', function ($window) {
     };
 
     return auth;
-}).factory('TokenInjector', function (AuthFactory) {
-    return {
-        request: function (config) {
-            config.headers = config.headers || {};
-            if (AuthFactory.isAuthenticated())
-                config.headers['Authorization'] = 'Bearer ' + AuthFactory.getToken();
-            return config;
-        }
-    };
 });

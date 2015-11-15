@@ -7,6 +7,12 @@
  */
 angular.module('emagScoreApp').factory('ProductFactory', function() {
     var product = {};
+    var products = [];
+    var paginator = {
+        maxPages: 5,
+        currentPage: 1,
+        resultsPerPage: 5
+    };
 
     return {
         setProduct: function(data) {
@@ -14,6 +20,21 @@ angular.module('emagScoreApp').factory('ProductFactory', function() {
         },
         getProduct: function() {
             return product;
+        },
+        setProducts: function(data) {
+            products = data;
+        },
+        getProducts: function() {
+            return products;
+        },
+        setTotalPages: function (total) {
+            paginator.total = total;
+        },
+        setCurrentPage: function (currentPage) {
+            paginator.currentPage = currentPage;
+        },
+        getPaginator: function() {
+            return paginator;
         }
     };
 });

@@ -88,6 +88,96 @@ var Product = {
             }
         );
     },
+    findProductsTrending: function(req, res) {
+        Database.connect().done(function (database) {
+                var type = req.params.type;
+                var pageNr = req.params.pageNr;
+                var resultsPerPage = parseInt(req.params.resultsPerPage);
+                var maxNrOfResults = parseInt(req.params.maxNrOfResults);
+                var query;
+                if (isNaN(resultsPerPage)) resultsPerPage = 5;
+                if (isNaN(maxNrOfResults)) maxNrOfResults = 20;
+                console.log("page no: " + pageNr + " results per page: " + resultsPerPage + " max results: " + maxNrOfResults + " type: " + type);
+                if (typeof req.params.category !== 'undefined')
+                    query = database.collection('product').find({category: req.params.category});
+                else
+                    query = database.collection('product').find();
+                query
+                    .skip(pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0)
+                    .limit(resultsPerPage)
+                    .toArray(function (err, docs) {
+                        console.log('findProductsTrending: ' + docs);
+                        res.jsonp(docs);
+                    });
+            }, function (reason) {
+                // handle onRejected
+                // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
+                console.log(reason);
+            }
+        );
+    },
+    saveProducts: function (json) {
+        Database.connect().done(function (database) {
+                // this is really annoying but must be done to keep track of trending -> is there any other way
+                json.forEach(function (doc, index, array) {
+                    database.collection('product')
+                        .find({name: doc.name})
+                        .limit(1)
+                        .project({price: 1, trending: 1})
+                        .next(function (err, resDoc) {
+                            var trending;
+                            if (err) {
+                                //todo if not found then upsert
+                            } else if (resDoc && resDoc.price) {
+                                if (doc.price != resDoc.price) {
+                                    trending = (doc.price - resDoc.price) / resDoc.price;
+                                    trending = Math.round(trending * 100);
+                                } else {
+                                    trending = resDoc.trending;
+                                }
+                            }
+                            database.collection('product').findOneAndUpdate({name: doc.name}, {
+                                $addToSet : {
+                                    history: {
+                                        price: doc.price,
+                                        dateRecorded: DateUtil.getCurrentDate()
+                                    }
+                                },
+                                $set  : {
+                                    name: doc.name,
+                                    pid: doc.pid,
+                                    price : doc.price,
+                                    currency: doc.currency,
+                                    category: doc.category,
+                                    productLink: doc.productLink,
+                                    imageLink: doc.imageLink,
+                                    ratingScore: doc.ratingScore,
+                                    nrRatings: doc.nrRatings,
+                                    active: doc.active,
+                                    details: doc.details,
+                                    trending: trending
+                                }
+                            }, { returnOriginal: false, upsert : true }, function (err, res) {
+                                if (err) {
+                                    //todo error handling
+                                    console.log(err);
+                                }
+                            });
+                        });
+                });
+            }, function (reason) {
+                // handle onRejected
+                // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
+                console.log(reason);
+            }
+        );
+    },
+    /**
+     * This was used before introducing trending.
+     * Unfortunately bulk updates do not really allow modification based on the old value.
+     *
+     * @param json product documents resulted from scanning
+     */
     saveBulkProducts: function (json) {
         // establish connection to db
         Database.connect().done(function (database) {
@@ -112,7 +202,6 @@ var Product = {
                                 pid: doc.pid,
                                 price : doc.price,
                                 currency: doc.currency,
-                                brand: doc.brand,
                                 category: doc.category,
                                 productLink: doc.productLink,
                                 imageLink: doc.imageLink,
@@ -139,10 +228,6 @@ var Product = {
                 console.log(reason);
             }
         );
-    },
-    testSaveBulkProducts: function () {
-        var productsString = '[{ "name": "Telefon mobil Allview A6 Quad, Dual SIM, Black",  "id": "458986",  "price": 249.99,  "currency": "lei",  "brand": "Allview",  "category": "telefoane-mobile",  "productLink": "/telefon-mobil-allview-dual-sim-black-a6-quad/pd/DC5HRBBBM/",  "imageLink": "//s2emagst.akamaized.net/products/757/756172/images/res_c7cb4c519a82ec07194856be2d16ffa8_150x150_bblf.jpg",  "ratingScore": 81.4,  "nrRatings": 15,  "active": 1,  "details": "Vandut de eMAG" },{ "name": "Telefon mobil UTOK 351D, Dual SIM, Black",  "id": "414965",  "price": 169.99,  "currency": "lei",  "brand": "UTOK",  "category": "telefoane-mobile",  "productLink": "/telefon-mobil-utok-dual-sim-black-351d/pd/DYD0LBBBM/",  "imageLink": "//s1emagst.akamaized.net/products/636/635409/images/res_e2e2bb01117344df85a666cb6835ec1a_150x150_t5ir.jpg",  "ratingScore": 72,  "nrRatings": 57,  "active": 1,  "details": "Vandut de eMAG" },{ "name": "Telefon mobil Allview A4 You, Dual SIM, Black",  "id": "399047",  "price": 199.99,  "currency": "lei",  "brand": "Allview",  "category": "telefoane-mobile",  "productLink": "/telefon-mobil-allview-dual-sim-black-a4-you/pd/DX1HCBBBM/",  "imageLink": "//s4emagst.akamaized.net/products/608/607117/images/res_6d1287cc19e9f94287452d90915bbacd_150x150_j72n.jpg",  "ratingScore": 69.8,  "nrRatings": 191,  "active": 1,  "details": "2 oferte disponibile" },{ "name": "Telefon mobil UTOK D40XS, Dual SIM, Black",  "id": "12885266",  "price": 229.9,  "currency": "lei",  "brand": "UTOK",  "category": "telefoane-mobile",  "productLink": "/telefon-mobil-utok-d40xs-dual-sim-black-d40xs-black/pd/DNBCSMBBM/",  "imageLink": "//s1emagst.akamaized.net/products/1450/1449197/images/res_e62098eecb284338b98039ae87d366b9_150x150_4pgq.jpg",  "ratingScore": 93.4,  "nrRatings": 12,  "active": 1,  "details": "Vandut de Flanco" }]';
-        this.saveBulkProducts(JSON.parse(productsString));
     }
 };
 

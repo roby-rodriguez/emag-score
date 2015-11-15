@@ -41,7 +41,7 @@
             </div>
         </ul>
     </div>
-    <ul class="nav nav-second-level">
+    <ul class="nav nav-second-level" ng-show="categories.length > 0">
         <li class="nav">
             <a ng-click="toggleShowCategories()">
                 <i ng-class="getToggleClass()"></i> Show {{collapsed ? 'more' : 'less'}}
@@ -49,3 +49,6 @@
         </li>
     </ul>
 </li>
+<div id="categoryLoadingWidget" class="ajax-loader-category">
+    <img src="resources/img/ajax_loader.gif" class="ajax-loader"/>
+</div>
