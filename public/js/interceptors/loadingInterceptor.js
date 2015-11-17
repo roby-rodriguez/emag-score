@@ -29,7 +29,9 @@ angular.module('emagScoreApp').factory('RequestLoadingInterceptor', function ($q
                 // do the time-out based ajax-loader
                 setTimeout(function () {
                     // todo check if showing still necessary, ie. if response has already been received or not
-                    $(component).show();
+                    if (pendingRequests.indexOf(component) > -1) {
+                        $(component).show();
+                    }
                 }, 500);
             }
             return config || $q.when(config);

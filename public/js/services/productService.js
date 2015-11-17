@@ -32,6 +32,19 @@ angular.module('emagScoreApp').service('ProductService', function($http, $q, Aut
         return deferred.promise;
     };
 
+    this.retrieveTrendingProducts = function (type, category, pageNr, resultsPerPage) {
+        var deferred = $q.defer();
+        $http({
+            url: Environment.productsUrl + '/' + type + '/' +pageNr + '/' + resultsPerPage + '/' + category
+        }).success(function(json){
+            deferred.resolve(json);
+        }).error(function () {
+            deferred.reject('An error has occured.');
+        });
+        return deferred.promise;
+    };
+
+
     this.retrieveTotalNrOfProducts = function (obj) {
         var deferred = $q.defer();
         $http({

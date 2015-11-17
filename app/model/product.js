@@ -49,7 +49,7 @@ var Product = {
                 var query;
                 if (isNaN(resultsPerPage)) resultsPerPage = 5;
                 console.log("page no: " + pageNr + " results per page: " + resultsPerPage);
-                if (typeof req.params.category !== 'undefined')
+                if (req.params.category && req.params.category !== 'undefined')
                     query = database.collection('product').find({category: req.params.category});
                 else
                     query = database.collection('product').find();
@@ -70,14 +70,19 @@ var Product = {
     findTotalNrOfProducts: function(req, res) {
         console.log('findTotalNrOfProducts: ' + req.params.category);
         Database.connect().done(function (database) {
-                var query;
-                if (typeof req.params.category !== 'undefined')
-                    query = database.collection('product').find({category: req.params.category});
-                else if (typeof req.params.title !== 'undefined')
-                    query = database.collection('product').find({name: { $regex: req.params.title, $options: 'i'}});
-                else
-                    query = database.collection('product').find();
-                query.count(function (err, count) {
+                var queryObject = {};
+                //todo refactor this - it's way too ugly like this
+                if (req.params.category && req.params.category !== 'undefined')
+                    queryObject.category = req.params.category;
+                else if (req.params.title && req.params.title !== 'undefined')
+                    queryObject.name = { $regex: req.params.title, $options: 'i'};
+
+                if (req.params.trendingLow && req.params.trendingLow !== 'undefined')
+                    queryObject.trending = { $lt : 0 };
+                else if (req.params.trendingHigh && req.params.trendingHigh !== 'undefined')
+                    queryObject.trending = { $gt : 0 };
+
+                database.collection('product').find(queryObject).count(function (err, count) {
                     console.log('findTotalNrOfProducts: ' + count);
                     res.jsonp(count);
                 });
@@ -93,16 +98,19 @@ var Product = {
                 var type = req.params.type;
                 var pageNr = req.params.pageNr;
                 var resultsPerPage = parseInt(req.params.resultsPerPage);
-                var maxNrOfResults = parseInt(req.params.maxNrOfResults);
                 var query;
                 if (isNaN(resultsPerPage)) resultsPerPage = 5;
-                if (isNaN(maxNrOfResults)) maxNrOfResults = 20;
-                console.log("page no: " + pageNr + " results per page: " + resultsPerPage + " max results: " + maxNrOfResults + " type: " + type);
-                if (typeof req.params.category !== 'undefined')
-                    query = database.collection('product').find({category: req.params.category});
-                else
-                    query = database.collection('product').find();
-                query
+                console.log("page no: " + pageNr + " results per page: " + resultsPerPage + " type: " + type);
+                var queryObject = {};
+                if (req.params.category && req.params.category !== 'undefined')
+                    //query = database.collection('product').find({category: req.params.category});
+                    queryObject.category = req.params.category;
+                if (type === 'low') // todo later on add filter on trending value
+                    queryObject.trending = { $lt : 0 };
+                else if (type === 'high')
+                    queryObject.trending = { $gt : 0 };
+                database.collection('product').find(queryObject)
+                    .sort({trending : -1})
                     .skip(pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0)
                     .limit(resultsPerPage)
                     .toArray(function (err, docs) {

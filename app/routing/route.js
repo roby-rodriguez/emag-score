@@ -17,11 +17,11 @@ var router          = express.Router();
 router.get('/', function(req, res) {
     res.render('index.html');
 });
-router.get('/products/trending/:maxNrOfResults/:pageNr/:resultsPerPage/:category', function(req, res) {
+router.get('/products/trendingLow/:pageNr/:resultsPerPage/:category', function(req, res) {
     req.params.type = 'low';
     Product.findProductsTrending(req, res)
 });
-router.get('/products/trending/:maxNrOfResults/:pageNr/:resultsPerPage/:category', function(req, res) {
+router.get('/products/trendingHigh/:pageNr/:resultsPerPage/:category', function(req, res) {
     req.params.type = 'high';
     Product.findProductsTrending(req, res)
 });
@@ -38,6 +38,12 @@ router.get('/products/total/category/:category', function(req, res) {
     Product.findTotalNrOfProducts(req, res)
 });
 router.get('/products/total/title/:title', function(req, res) {
+    Product.findTotalNrOfProducts(req, res)
+});
+router.get('/products/total/trendingHigh/:category', function(req, res) {
+    Product.findTotalNrOfProducts(req, res)
+});
+router.get('/products/total/trendingLow/:category', function(req, res) {
     Product.findTotalNrOfProducts(req, res)
 });
 router.get('/categories', Category.findAllCategories);

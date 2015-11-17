@@ -22,7 +22,6 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
      */
     $scope.setCategory = function(data) {
         CategoryFactory.setCategory(data);
-        $rootScope.$broadcast('categoryChanged', []);
     };
 
     /**

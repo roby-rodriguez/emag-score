@@ -8,6 +8,7 @@
 angular.module('emagScoreApp').factory('ProductFactory', function() {
     var product = {};
     var products = [];
+    var dirty = false;
     var paginator = {
         maxPages: 5,
         currentPage: 1,
@@ -26,6 +27,12 @@ angular.module('emagScoreApp').factory('ProductFactory', function() {
         },
         getProducts: function() {
             return products;
+        },
+        isDirty: function () {
+            return dirty;
+        },
+        setDirty: function (data) {
+            dirty = data;
         },
         setTotalPages: function (total) {
             paginator.total = total;

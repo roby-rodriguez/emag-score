@@ -13,9 +13,20 @@
  * TODO controllers tend to clutter unnecessary business logic, refactor to utilities/services
  */
 angular.module('emagScoreApp')
-    .controller('ProductController', function($rootScope, $scope, $log, ProductFactory, ProductService, CategoryFactory) {
-        // current active browse type -> category nav/search
+    .controller('ProductController', function($rootScope, $scope, $log, ProductService, ProductFactory, CategoryFactory) {
+
+        $scope.getCategory = function () {
+            return CategoryFactory.getCategory();
+        };
         $scope.getProducts = function () {
+            // lazy load products on category change
+            if (ProductFactory.isDirty()) {
+                $scope.retrieveTotalNrOfProducts('category', CategoryFactory.getCategory().name);
+                // reset pagination
+                ProductFactory.setCurrentPage(1);
+                $scope.displayProducts();
+                ProductFactory.setDirty(false);
+            }
             return ProductFactory.getProducts();
         };
         $scope.getPaginator = function () {
@@ -68,17 +79,4 @@ angular.module('emagScoreApp')
                     // display error message in UI
                 });
         };
-
-        /**
-         * Listens to category changed events coming from category view
-         * todo get rid of this - doesn't work first time
-         */
-        $scope.$on('categoryChanged', function () {
-            $scope.type = 'category';
-            $scope.subcategory = CategoryFactory.getCategory();
-            $scope.retrieveTotalNrOfProducts($scope.type, $scope.subcategory.name);
-            // reset pagination
-            ProductFactory.setCurrentPage(1);
-            $scope.displayProducts();
-        });
 });

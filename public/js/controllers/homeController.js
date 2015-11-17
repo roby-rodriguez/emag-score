@@ -1,7 +1,7 @@
 /**
  * Created by robaa on 11.08.2015.
  */
-angular.module('emagScoreApp').controller('HomeController', function($scope, HomeFactory) {
+angular.module('emagScoreApp').controller('HomeController', function($scope, HomeFactory, ProductFactory) {
     $scope.tabs = [
         { color : 'primary', icon : 'fa-smile-o', title : 'Trending Low', link : 'trendingLow' },
         { color : 'green', icon : 'fa-frown-o', title : 'Trending High', link : 'trendingHigh' },
@@ -11,5 +11,6 @@ angular.module('emagScoreApp').controller('HomeController', function($scope, Hom
     
     $scope.setTabNavigation = function (selectedTab) {
         HomeFactory.setTab(selectedTab);
+        ProductFactory.setDirty(true);
     }
 });
