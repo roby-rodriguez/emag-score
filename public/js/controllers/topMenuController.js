@@ -7,7 +7,7 @@ angular.module('emagScoreApp')
         $scope.searchInputEnter = function (keyEvent) {
             if (keyEvent.which === 13) {
                 ProductSearchFactory.setSearchKeyword($scope.keyword);
-                $location.url('/productSearch');
+                return $location.url('/productSearch');
             }
         };
     });

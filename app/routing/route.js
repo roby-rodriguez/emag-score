@@ -41,9 +41,11 @@ router.get('/products/total/title/:title', function(req, res) {
     Product.findTotalNrOfProducts(req, res)
 });
 router.get('/products/total/trendingHigh/:category', function(req, res) {
+    req.params.type = 'high';
     Product.findTotalNrOfProducts(req, res)
 });
 router.get('/products/total/trendingLow/:category', function(req, res) {
+    req.params.type = 'low';
     Product.findTotalNrOfProducts(req, res)
 });
 router.get('/categories', Category.findAllCategories);

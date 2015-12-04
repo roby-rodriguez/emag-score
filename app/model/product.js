@@ -77,9 +77,9 @@ var Product = {
                 else if (req.params.title && req.params.title !== 'undefined')
                     queryObject.name = { $regex: req.params.title, $options: 'i'};
 
-                if (req.params.trendingLow && req.params.trendingLow !== 'undefined')
+                if (req.params.type && req.params.type !== 'undefined')
                     queryObject.trending = { $lt : 0 };
-                else if (req.params.trendingHigh && req.params.trendingHigh !== 'undefined')
+                else if (req.params.type && req.params.type !== 'undefined')
                     queryObject.trending = { $gt : 0 };
 
                 database.collection('product').find(queryObject).count(function (err, count) {

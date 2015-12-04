@@ -21,11 +21,7 @@ angular.module('emagScoreApp')
         $scope.getProducts = function () {
             // lazy load products on category change
             if (ProductFactory.isDirty()) {
-                $scope.retrieveTotalNrOfProducts('category', CategoryFactory.getCategory().name);
-                // reset pagination
-                ProductFactory.setCurrentPage(1);
-                $scope.displayProducts();
-                ProductFactory.setDirty(false);
+                $scope.init();
             }
             return ProductFactory.getProducts();
         };
@@ -79,4 +75,13 @@ angular.module('emagScoreApp')
                     // display error message in UI
                 });
         };
+
+        $scope.init = function () {
+            $scope.retrieveTotalNrOfProducts('category', CategoryFactory.getCategory().name);
+            // reset pagination
+            ProductFactory.setCurrentPage(1);
+            $scope.displayProducts();
+            ProductFactory.setDirty(false);
+        };
+        $scope.init();
 });

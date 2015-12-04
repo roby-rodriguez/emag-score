@@ -12,6 +12,11 @@ angular.module('emagScoreApp')
         // evt de pus HomeController pe menubar la searchInputEnter
 
         $scope.getProducts = function () {
+            // lazy load products on category change
+            if (ProductFactory.isDirty()) {
+                // todo fix this bullshit in retriever
+                $scope.init();
+            }
             return ProductFactory.getProducts();
         };
         $scope.getPaginator = function () {
@@ -44,9 +49,13 @@ angular.module('emagScoreApp')
                 });
         };
 
-        // reset pagination
-        ProductFactory.setCurrentPage(1);
-        // todo fix this bullshit in retriever
-        $scope.retrieveTotalNrOfProducts('title', ProductSearchFactory.getSearchKeyword());
-        $scope.displayProducts();
+        $scope.init = function () {
+            // todo fix this bullshit in retriever
+            $scope.retrieveTotalNrOfProducts('title', ProductSearchFactory.getSearchKeyword());
+            // reset pagination
+            ProductFactory.setCurrentPage(1);
+            $scope.displayProducts();
+            ProductFactory.setDirty(false);
+        };
+        $scope.init();
     });
