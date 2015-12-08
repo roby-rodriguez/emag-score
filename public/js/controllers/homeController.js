@@ -11,6 +11,7 @@ angular.module('emagScoreApp').controller('HomeController', function($scope, Hom
     
     $scope.setTabNavigation = function (selectedTab) {
         HomeFactory.setTab(selectedTab);
-        ProductFactory.setDirty(true);
+        ProductFactory.toggleProductTrending(selectedTab.link);
+        ProductFactory.refreshProducts();
     }
 });

@@ -19,10 +19,6 @@ angular.module('emagScoreApp')
             return CategoryFactory.getCategory();
         };
         $scope.getProducts = function () {
-            // lazy load products on category change
-            if (ProductFactory.isDirty()) {
-                $scope.init();
-            }
             return ProductFactory.getProducts();
         };
         $scope.getPaginator = function () {
@@ -31,7 +27,7 @@ angular.module('emagScoreApp')
 
         $scope.pageChanged = function() {
             $log.log("Changed to 2: " + ProductFactory.getPaginator().currentPage);
-            $scope.displayProducts();
+            ProductFactory.refreshProducts();
         };
 
         $scope.ratingStyleClass = function(ratingScore, index) {
@@ -54,34 +50,4 @@ angular.module('emagScoreApp')
                 $scope.error = err;
             });
         };
-
-        $scope.displayProducts = function () {
-            ProductService.retrieveProducts(CategoryFactory.getCategory().name, ProductFactory.getPaginator().currentPage, ProductFactory.getPaginator().resultsPerPage)
-                .then(function (json) {
-                    // promise fulfilled
-                    // $scope.products = json;
-                    ProductFactory.setProducts(json);
-                }, function(error) {
-                    // display error message in UI
-                });
-        };
-
-        $scope.retrieveTotalNrOfProducts = function (type, keyword) {
-            ProductService.retrieveTotalNrOfProducts({ type : type, keyword : keyword })
-                .then(function (total) {
-                    // promise fulfilled
-                    ProductFactory.setTotalPages(total);
-                }, function(error) {
-                    // display error message in UI
-                });
-        };
-
-        $scope.init = function () {
-            $scope.retrieveTotalNrOfProducts('category', CategoryFactory.getCategory().name);
-            // reset pagination
-            ProductFactory.setCurrentPage(1);
-            $scope.displayProducts();
-            ProductFactory.setDirty(false);
-        };
-        $scope.init();
-});
+    });

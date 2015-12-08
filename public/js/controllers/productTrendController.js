@@ -8,15 +8,6 @@ angular.module('emagScoreApp')
             return HomeFactory.getTab();
         };
         $scope.getProducts = function () {
-            // lazy load products on category change
-            if (ProductFactory.isDirty()) {
-                //todo add category to scope and pass as second parameter
-                $scope.retrieveTotalNrOfProducts(HomeFactory.getTab().link, undefined);
-                // reset pagination
-                ProductFactory.setCurrentPage(1);
-                $scope.displayProducts();
-                ProductFactory.setDirty(false);
-            }
             return ProductFactory.getProducts();
         };
         $scope.getPaginator = function () {
@@ -25,7 +16,7 @@ angular.module('emagScoreApp')
 
         $scope.pageChanged = function() {
             $log.log("Changed to 2: " + ProductFactory.getPaginator().currentPage);
-            $scope.displayProducts();
+            ProductFactory.refreshProducts();
         };
 
         $scope.ratingStyleClass = function(ratingScore, index) {
@@ -47,26 +38,5 @@ angular.module('emagScoreApp')
             }).error(function (err) {
                 $scope.error = err;
             });
-        };
-
-        $scope.displayProducts = function () {
-            // todo add category as second param
-            ProductService.retrieveTrendingProducts($scope.getTab().link, undefined, ProductFactory.getPaginator().currentPage, ProductFactory.getPaginator().resultsPerPage)
-                .then(function (json) {
-                    // promise fulfilled
-                    ProductFactory.setProducts(json);
-                }, function(error) {
-                    // display error message in UI
-                });
-        };
-
-        $scope.retrieveTotalNrOfProducts = function (type, keyword) {
-            ProductService.retrieveTotalNrOfProducts({ type : type, keyword : keyword })
-                .then(function (total) {
-                    // promise fulfilled
-                    ProductFactory.setTotalPages(total);
-                }, function(error) {
-                    // display error message in UI
-                });
         };
     });

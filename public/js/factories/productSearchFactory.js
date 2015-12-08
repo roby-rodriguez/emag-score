@@ -6,12 +6,11 @@ angular.module('emagScoreApp').factory('ProductSearchFactory', function(ProductF
 
     return {
         setSearchKeyword: function(data) {
-            ProductFactory.setDirty(true);
             if (!data) {
                 ProductFactory.setProducts([]);
-                ProductFactory.setDirty(false);
-            } else if (data === search.keyword) {
-                ProductFactory.setDirty(false);
+            } else if (data !== search.keyword) {
+                ProductFactory.toggleProductSearch(data);
+                ProductFactory.refreshProducts();
             }
             search.keyword = data;
         },

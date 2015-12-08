@@ -8,7 +8,8 @@ angular.module('emagScoreApp').factory('CategoryFactory', function(ProductFactor
         setCategory: function(data) {
             if (data && data.name !== subcategory.name) {
                 subcategory = data;
-                ProductFactory.setDirty(true);
+                ProductFactory.toggleProductCategory(subcategory.name);
+                ProductFactory.refreshProducts();
             }
         },
         getCategory: function(callback) {
