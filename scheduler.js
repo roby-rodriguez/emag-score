@@ -9,7 +9,7 @@
 var cron = require('cron');
 var execFile = require('child_process').execFile;
 var Scanner = require('./app/business/scan');
-var Constants = require('./app/config/local.env');
+var Constants = require('./app/config/generated/env');
 
 /**
  * Runs the scanner job every day of the month at 00:15 local time.

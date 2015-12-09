@@ -10,7 +10,7 @@ module.exports = function (req, res, next) {
 
     if (token) {
         try {
-            var decoded = jwt.decode(token, require('../config/secret')());
+            var decoded = jwt.decode(token, require('../config/generated/env').SESSION_SECRET);
 
             if (decoded.expires <= Date.now()) {
                 return reject(res);

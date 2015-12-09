@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 // required for passport
 app.use(session({
-    secret: require('./app/config/secret')(),
+    secret: require('./app/config/generated/env').SESSION_SECRET,
     //cookie: { secure: true }, // https needed for this option
     resave: false,
     saveUninitialized: false
@@ -62,7 +62,7 @@ app.all('/*', function (req, res, next) {
     - applies only to secured routes (i.e. which require login)
  */
 // app.all('/secured/*', require('./app/middleware/validation'));
-app.all('/secured/*', jwt({secret: require('./app/config/secret')()}));
+app.all('/secured/*', jwt({secret: require('./app/config/generated/env').SESSION_SECRET}));
 // load app routing
 app.use('/', require('./app/routing/route'));
 // if no route matched so far reply with 404

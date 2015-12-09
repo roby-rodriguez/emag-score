@@ -28,6 +28,7 @@
     "cheerio"                 : "*",
     "antigate"                : "*",
     "q"                       : "*",
+    "lodash"                  : "*",
     "cron"                    : "*",
     "passport"                : "*",
     "passport-local"          : "*",

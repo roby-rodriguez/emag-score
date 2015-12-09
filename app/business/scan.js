@@ -20,7 +20,7 @@ var EventEmitter = require('events').EventEmitter;
 var Product  = require('../model/product');
 var Category  = require('../model/category');
 var CaptchaSolver = require('./captchaSolver');
-var Constants = require('../config/local.env');
+var Constants = require('../config/generated/env');
 
 var Scanner = {
     ProductsHtmlType : { GRID: 0, FIGURE: 1 },

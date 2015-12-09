@@ -9,5 +9,5 @@ module.exports = {
     /** remote mongoDB password */
     MONGO_PASSWORD: '',
     /** remote mongoDB url */
-    MONGO_URL: 'localhost:27017/emagscore-dev'
+    MONGO_URL: ''
 };

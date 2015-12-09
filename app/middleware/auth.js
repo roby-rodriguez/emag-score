@@ -40,11 +40,11 @@ function reject(res) {
 }
 
 function generateToken(user) {
-    var expires = expiresIn(7); // 7 days
+    var expires = expiresIn(require('../config/generated/env').TOKEN_VALIDITY);
     var token = jwt.encode({
         expires: expires,
         user: user.email
-    }, require('../config/secret')());
+    }, require('../config/generated/env').SESSION_SECRET);
     return token;
 }
 

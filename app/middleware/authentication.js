@@ -64,7 +64,7 @@ function generateToken(user) {
     return jwt.sign({
         email: user.email,
         exp: parseInt(expires.getTime() / 1000)
-    }, require('../config/secret')());
+    }, require('../config/generated/env').SESSION_SECRET);
 }
 
 module.exports = Authentication;

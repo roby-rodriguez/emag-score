@@ -7,7 +7,7 @@
  */
 var Antigate = require('antigate');
 var request = require('request');
-var Constants = require('../config/local.env') ;
+var Constants = require('../config/generated/env') ;
 
 var CaptchaSolver = {
     ag: new Antigate(Constants.CAPTCHA_SERVICE_APP_KEY),

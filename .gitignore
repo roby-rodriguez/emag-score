@@ -32,6 +32,7 @@ build/Release
 node_modules
 public/libs
 public/js/config/generated
+app/config/generated
 
 # IDE configuration
 .idea
