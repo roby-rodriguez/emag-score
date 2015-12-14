@@ -110,6 +110,31 @@ body {
     border: 1px solid #ddd;
 }
 
+.v-center {
+    min-height: 230px;
+    display: flex;
+    justify-content: center;
+    flex-flow: column wrap;
+}
+
+.s-scroll {
+    max-height: 230px;
+    overflow-y:auto;
+}
+
+.select-cursor {
+    cursor: pointer;
+}
+
+.selected-item {
+    background-color: activecaption;
+    color:white;
+}
+
+.list-group-item-slim {
+    margin: -1px 0 -1px 0;
+}
+
 .jumbotron {
     .jumbotron;
     margin-top: 30px;

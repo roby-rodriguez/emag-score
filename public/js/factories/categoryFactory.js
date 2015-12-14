@@ -1,8 +1,19 @@
 /**
  * Factory for creating the 'category' object that is used for category.html
  */
-angular.module('emagScoreApp').factory('CategoryFactory', function(ProductFactory) {
+angular.module('emagScoreApp').factory('CategoryFactory', function(CategoryService, ProductFactory) {
     var subcategory = {};
+    var categories;
+    
+    function initCategories() {
+        CategoryService.retrieveCategories()
+            .then(function (json) {
+                // promise fulfilled
+                categories = json;
+            }, function(error) {
+                // display error message in UI
+            });
+    }
 
     return {
         setCategory: function(data) {
@@ -12,8 +23,15 @@ angular.module('emagScoreApp').factory('CategoryFactory', function(ProductFactor
                 ProductFactory.refreshProducts();
             }
         },
-        getCategory: function(callback) {
+        getCategory: function() {
             return subcategory;
+        },
+        getCategories: function() {
+            if (!categories) {
+                categories = [];
+                initCategories();
+            }
+            return categories;
         },
         initCategory: function(callback) {
             callback(subcategory);
