@@ -12,6 +12,7 @@ angular.module("emagScoreApp", [
     'ngRoute',
     'ngAnimate',
     'ui.bootstrap',
+    'ngDragDrop',
     'emagScoreConstant'
 ]).run(function ($rootScope, Environment) {
     $rootScope.Environment = Environment;

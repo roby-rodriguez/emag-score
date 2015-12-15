@@ -8,6 +8,7 @@
  * stackoverflow.com/questions/16050533/how-can-i-obtain-the-result-array-of-an-angular-filter-expression-in-a-varia#answer-16050534
  */
 angular.module('emagScoreApp').controller('CategoryController', function($rootScope, $scope, $modal, CategoryFactory) {
+    // TODO extract constant just like in app
     var MAX_VISIBLE_CATEGORIES = 3;
     $scope.search = {};
     //$scope.filteredCategories = [];
@@ -26,6 +27,10 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
     $scope.getCategories = function() {
         return CategoryFactory.getCategories();
     };
+    
+    $scope.getSelectedCategories = function() {
+        return CategoryFactory.getSelectedCategories();
+    };
 
     /**
      * Interceptor function for filter category
@@ -40,6 +45,19 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
             });
         }
         return filteredCategories;
+    };
+    
+    /**
+     * TODO need to take into account direction
+     */
+    $scope.itemDropped = function() {
+        CategoryFactory.addSelection($scope.selectedCategory, $scope.selectedSubcategory);
+        // $scope.$apply();
+    };
+    
+    $scope.itemDragged = function(e, h, category, subcategory) {
+        $scope.selectedCategory = category;
+        $scope.selectedSubcategory = subcategory;
     };
 
     /**
