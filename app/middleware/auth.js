@@ -7,6 +7,10 @@
 var jwt  = require('jwt-simple');
 var User = require('../model/user');
 
+/**
+ * !!! THIS IS NOT USED ANYMORE !!! -> see authentication.js
+ */ 
+
 var Auth = {
     login: function (req, res) {
         var email = req.body.email || '';

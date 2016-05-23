@@ -45,6 +45,16 @@ angular.module('emagScoreApp').factory('ProductFactory', function(ProductService
     ProductTrendProvider.prototype.getTotalsURL = function () {
         return Environment.countProductsUrl + this.type +'/' + this.data;
     };
+    
+    function ProductFavoriteProvider(userId) {
+        this.data = userId;
+    }
+    ProductFavoriteProvider.prototype.getProductsURL = function () {
+        return Environment.retrieveFavoritesUrl + paginator.currentPage + '/' + paginator.resultsPerPage + '/' + this.data;
+    };
+    ProductFavoriteProvider.prototype.getTotalsURL = function () {
+        return Environment.countFavoritesUrl + this.data;
+    };
 
     return {
         setProduct: function(data) {
@@ -79,6 +89,10 @@ angular.module('emagScoreApp').factory('ProductFactory', function(ProductService
         toggleProductTrending: function (type, data) {
             paginator.currentPage = 1;
             productProvider = new ProductTrendProvider(type, data);
+        },
+        toggleProductFavorite: function (data) {
+            paginator.currentPage = 1;
+            productProvider = new ProductFavoriteProvider(data);
         },
         refreshProducts: function () {
             ProductService.retrieveProducts(productProvider)

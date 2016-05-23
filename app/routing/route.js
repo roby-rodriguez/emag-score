@@ -56,8 +56,11 @@ router.post('/register', Authentication.register);
 /*
  * routes available for only for authenticated & authorized users
  */
-router.get('/secured/favorites/:userId/:pageNr/:resultsPerPage', function(req, res) {
+router.get('/secured/favorites/:pageNr/:resultsPerPage/:userId', function(req, res) {
     User.findAllFavorites(req, res)
+});
+router.get('/secured/favorites/total/:userId', function(req, res) {
+    User.findFavoritesTotal(req, res)
 });
 router.post('/secured/favorites/add', function(req, res) {
     User.addFavorite(req, res)

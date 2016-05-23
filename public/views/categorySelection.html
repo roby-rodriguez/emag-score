@@ -9,14 +9,15 @@
             </div>
             
             <div class="form-group">
-                <div class="col-md-4 col-md-offset-1">
+                <div class="col-md-4 col-md-offset-1" data-drop="true" data-jqyoui-options="{accept: '.list-group-item-dst'}" jqyoui-droppable="{onDrop:'itemRemoved()'}">
                     <div class="list-group s-scroll select-cursor" id="list1">
                         <li class="list-group-item active">Available categories</li>
-                        <div ng-repeat="category in getCategories() | orderBy: 'title' track by $index">
-                            <li ng-class="getCategoryClass($index, 'list-group-item text-left')"
+                        <div ng-repeat="category in getAvailableCategories() | orderBy: 'title' track by $index">
+                            <li ng-class="getCategoryClass($index, 'list-group-item text-left list-group-item-src')"
                                 data-drag="true"
                                 data-jqyoui-options="{helper: 'clone'}"
-                                jqyoui-draggable="{onStart:'itemDragged(category)'}">
+                                jqyoui-draggable="{onStart:'itemDragged(category)'}"
+                                jqyoui-droppable>
                                 <i class="fa fa-fw fa-plus-circle"
                                     data-toggle="collapse"
                                     data-target="#selection_src_{{category._id}}"
@@ -25,14 +26,14 @@
                             </li>
                             <div ng-class="getCategoryClass($index, 'collapse')" id="selection_src_{{category._id}}" collapsible>
                                 <div ng-repeat="subcategory in category.subcategories | orderBy: 'name'">
-                                    <li class="list-group-item list-group-item-slim" 
+                                    <li class="list-group-item list-group-item-slim list-group-item-src" 
                                         data-drag="true" 
                                         data-jqyoui-options="{helper: 'clone'}" 
                                         jqyoui-draggable="{onStart:'itemDragged(category, subcategory)'}">{{subcategory.title}}</li>
                                 </div>
                             </div>
                         </div>
-                        <div class="list-group" ng-show="getCategories().length > 0">
+                        <div class="list-group" ng-show="getAvailableCategories().length > 0">
                             <li class="list-group-item">
                                 <a ng-click="toggleShowCategories()">
                                     <i ng-class="getToggleClass()"></i> Show {{collapsed ? 'more' : 'less'}}
@@ -42,14 +43,20 @@
                     </div>
                 </div>
                 <div class="col-md-2 v-center">
-                    <button title="Send to list 2" class="btn btn-default center-block add"><i class="glyphicon glyphicon-chevron-right"></i></button>
-                    <button title="Send to list 1" class="btn btn-default center-block remove"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                    <button title="Select all" class="btn btn-default center-block add"><i class="fa fa-angle-double-right"></i></button>
+                    <button title="Select" class="btn btn-default center-block add"><i class="fa fa-angle-right"></i></button>
+                    <button title="Remove" class="btn btn-default center-block remove"><i class="fa fa-angle-left"></i></button>
+                    <button title="Remove all" class="btn btn-default center-block remove"><i class="fa fa-angle-double-left"></i></button>
                 </div>
-                <div class="col-md-4" data-drop="true" data-jqyoui-options jqyoui-droppable="{onDrop:'itemDropped()'}" style='height:150px;'>
+                <div class="col-md-4" data-drop="true" data-jqyoui-options="{accept: '.list-group-item-src'}" jqyoui-droppable="{onDrop:'itemAdded()'}">
                     <div class="list-group s-scroll select-cursor" id="list2">
                         <li class="list-group-item active">Selected categories</li>
-                        <div ng-repeat="category in getSelectedCategories() | orderBy: 'title' track by $index">
-                            <li ng-class="getCategoryClass($index, 'list-group-item text-left')" data-drag="true" data-drop="true" data-jqyoui-options="{helper: 'clone'}" jqyoui-draggable jqyoui-droppable>
+                        <div ng-repeat="category in getCategories() | orderBy: 'title' track by $index">
+                            <li ng-class="getCategoryClass($index, 'list-group-item text-left list-group-item-dst')"
+                                data-drag="true"
+                                data-jqyoui-options="{helper: 'clone'}"
+                                jqyoui-draggable="{onStart:'itemDragged(category)'}"
+                                jqyoui-droppable>
                                 <i class="fa fa-fw fa-plus-circle"
                                     data-toggle="collapse"
                                     data-target="#selection_dst_{{category._id}}"
@@ -58,11 +65,14 @@
                             </li>
                             <div ng-class="getCategoryClass($index, 'collapse')" id="selection_dst_{{category._id}}" collapsible>
                                 <div ng-repeat="subcategory in category.subcategories | orderBy: 'name'">
-                                    <li class="list-group-item list-group-item-slim" data-drag="true" data-jqyoui-options="{helper: 'clone'}" jqyoui-draggable>{{subcategory.title}}</li>
+                                    <li class="list-group-item list-group-item-slim list-group-item-dst"
+                                        data-drag="true"
+                                        data-jqyoui-options="{helper: 'clone'}"
+                                        jqyoui-draggable="{onStart:'itemDragged(category, subcategory)'}">{{subcategory.title}}</li>
                                 </div>
                             </div>
                         </div>
-                        <div class="list-group" ng-show="getSelectedCategories().length > 0">
+                        <div class="list-group" ng-show="getCategories().length > 0">
                             <li class="list-group-item">
                                 <a ng-click="toggleShowCategories()">
                                     <i ng-class="getToggleClass()"></i> Show {{collapsed ? 'more' : 'less'}}

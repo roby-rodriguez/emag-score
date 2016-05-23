@@ -41,4 +41,14 @@ angular.module('emagScoreApp').service('ProductService', function($http, $q, Aut
                 next(info);
             });
     };
+    
+    this.removeFavorite = function (productId, next) {
+        return $http.post(Environment.removeFavoriteUrl,
+            {
+                email: AuthFactory.currentUser(),
+                pid: productId
+            }).success(function(info){
+                next(info);
+            });
+    };
 });

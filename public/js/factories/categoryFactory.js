@@ -3,17 +3,69 @@
  */
 angular.module('emagScoreApp').factory('CategoryFactory', function(CategoryService, ProductFactory) {
     var subcategory = {};
-    var categories;
-    var selectedCategories = [];
+    var selectedCategories;
+    var excludedCategories = [];
     
     function initCategories() {
         CategoryService.retrieveCategories()
             .then(function (json) {
                 // promise fulfilled
-                categories = json;
+                selectedCategories = json;
             }, function(error) {
                 // display error message in UI
             });
+    }
+    
+    function position(array, category) {
+    	for (var i = 0; i < array.length; i++)
+    	    if (array[i].title == category.title)
+    	        return i;
+    	return -1;
+    }
+    
+    function remove(category, subcategory) {
+		for (var j = 0; j < category.subcategories.length; j++)
+			if (category.subcategories[j].title == subcategory.title) {
+				category.subcategories.splice(j, 1);
+				return;
+			}
+    }
+    
+    function select(selectedCategory, selectedSubcategory, selection) {
+        var src, dest, categoryPos, subcategoryPos;
+        if (selection) {
+            src = excludedCategories;
+            dest = selectedCategories;
+        } else {
+            src = selectedCategories;
+            dest = excludedCategories;
+        }
+        if ((categoryPos = position(src, selectedCategory)) > -1) {
+        	if (selectedSubcategory) {
+        		if ((subcategoryPos = position(dest, selectedCategory)) > -1)
+        			dest[subcategoryPos].subcategories.push(selectedSubcategory);
+        		else {
+        			dest.push({_id: selectedCategory._id, title: selectedCategory.title, subcategories: []});
+        			dest[dest.length - 1].subcategories.push(selectedSubcategory);
+        		}
+        		remove(src[categoryPos], selectedSubcategory);
+        	} else {
+        		if ((subcategoryPos = position(dest, selectedCategory)) > -1)
+        			dest[subcategoryPos].subcategories = dest[subcategoryPos].subcategories.concat(src[categoryPos].subcategories);
+        		else
+        			dest.push(src[categoryPos]);
+        		src.splice(categoryPos, 1);
+        	}
+        } else {
+        	if (selectedSubcategory) {
+        		dest.push({_id: selectedCategory._id, title: selectedCategory.title, subcategories: []});
+        		dest[dest.length - 1].subcategories.push(selectedSubcategory);
+        		remove(src[categoryPos], selectedSubcategory);
+        	} else {
+        		dest.push(selectedCategory);
+        		src.splice(categoryPos, 1);
+        	}
+        }
     }
 
     return {
@@ -28,51 +80,20 @@ angular.module('emagScoreApp').factory('CategoryFactory', function(CategoryServi
             return subcategory;
         },
         getCategories: function() {
-            if (!categories) {
-                categories = [];
+            if (!selectedCategories) {
+                selectedCategories = [];
                 initCategories();
             }
-            return categories;
-        },
-        getSelectedCategories: function() {
             return selectedCategories;
         },
+        getAvailableCategories: function() {
+            return excludedCategories;
+        },
+        removeSelection: function(selectedCategory, selectedSubcategory) {
+            select(selectedCategory, selectedSubcategory, false);
+        },
         addSelection: function(selectedCategory, selectedSubcategory) {
-        	for (var i = 0; i < categories.length; i++)
-        		if (categories[i].title == selectedCategory.title) {
-        			if (selectedSubcategory) {
-        				var foundPosition = -1;
-        				for (var k = 0; k < selectedCategories.length; k++)
-        					if (selectedCategories[k].title == selectedCategory.title) {
-        						foundPosition = k;
-        						break;
-        					}
-        				if (foundPosition > -1)
-        					selectedCategories[foundPosition].subcategories.push(selectedSubcategory);
-        				else {
-        					selectedCategories.push({_id: selectedCategory._id, title: selectedCategory.title, subcategories: []});
-        					selectedCategories[selectedCategories.length - 1].subcategories.push(selectedSubcategory);
-        				}
-        				for (var j = 0; j < categories[i].subcategories.length; j++)
-        					if (categories[i].subcategories[j].title == selectedSubcategory.title) {
-        						categories[i].subcategories.splice(j, 1);
-        						return;
-        					}
-        			} else {
-        			    foundPosition = -1;
-        			    for (var j = 0; j < selectedCategories.length; j++)
-        			        if (selectedCategories[j].title == selectedCategory.title) {
-        			            foundPosition = j;
-        			            break;
-        			        }
-        			    if (foundPosition > -1)
-        			        selectedCategories[foundPosition].subcategories = selectedCategories[foundPosition].subcategories.concat(categories[i].subcategories);
-        				else
-        				    selectedCategories.push(categories[i]);
-        				categories.splice(i, 1);
-        				break;
-        			}
-        		}
+        	select(selectedCategory, selectedSubcategory, true);
         },
         initCategory: function(callback) {
             callback(subcategory);

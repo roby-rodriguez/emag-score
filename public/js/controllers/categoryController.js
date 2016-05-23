@@ -28,8 +28,8 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
         return CategoryFactory.getCategories();
     };
     
-    $scope.getSelectedCategories = function() {
-        return CategoryFactory.getSelectedCategories();
+    $scope.getAvailableCategories = function() {
+        return CategoryFactory.getAvailableCategories();
     };
 
     /**
@@ -47,12 +47,12 @@ angular.module('emagScoreApp').controller('CategoryController', function($rootSc
         return filteredCategories;
     };
     
-    /**
-     * TODO need to take into account direction
-     */
-    $scope.itemDropped = function() {
+    $scope.itemAdded = function() {
         CategoryFactory.addSelection($scope.selectedCategory, $scope.selectedSubcategory);
-        // $scope.$apply();
+    };
+    
+    $scope.itemRemoved = function() {
+        CategoryFactory.removeSelection($scope.selectedCategory, $scope.selectedSubcategory);
     };
     
     $scope.itemDragged = function(e, h, category, subcategory) {

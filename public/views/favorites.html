@@ -5,5 +5,51 @@
                 <h1 class="page-header">Favorites</h1>
             </div>
         </div>
+        <div id="productLoadingWidget" class="ajax-loader-product">
+            <img src="resources/img/ajax_loader.gif" class="ajax-loader"/>
+        </div>
+        <div ng-show="getProducts().length > 0">
+            <div ng-include src="'templates/serverResponse.html'"></div>
+            <div class="row">
+                <div ng-include src="'templates/paginator.html'"></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="product in getProducts() | orderBy: 'name'">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            {{ product.category }}
+                        </div>
+                        <div class="panel-body">
+                            <p>{{ product.name }}</p>
+                            <img ng-src="{{product.imageLink}}" class="img-responsive" alt="Product image" >
+                            <br/>
+                            <div class="btn-group-vertical">
+                                <a ng-href="{{Environment.emagBase + product.productLink}}" class="btn btn-primary btn-sm">
+                                    <span class="fa fa-shopping-cart"></span> Go to product page
+                                </a>
+                                <a ng-href="#/productDetail" ng-click="setProduct(product)" class="btn btn-info btn-sm">
+                                    <span class="fa fa-area-chart"></span> View price history
+                                </a>
+                                <a ng-href="" class="btn btn-danger btn-sm" ng-click="removeFavorite(product)" authorization>
+                                    <span class="fa fa-heart-o"></span> Remove from favorites
+                                </a>
+                            </div>
+                            <br/><br/>
+                            <div ng-include src="'templates/rating.html'"></div>
+                            <p class="text-primary">{{product.details}}</p>
+                        </div>
+                        <div class="panel-footer">
+                            {{ product.price }} RON
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div ng-include src="'templates/paginator.html'"></div>
+            </div>
+        </div>
+        <div class="col-md-12" ng-show="getProducts().length == 0">
+            <pre>No products found!</pre>
+        </div>
     </div>
 </div>

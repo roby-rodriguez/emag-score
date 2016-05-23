@@ -5,9 +5,9 @@
  */
 module.exports = {
     /** remote mongoDB username */
-    MONGO_USERNAME: '',
+    MONGO_USERNAME: 'user',
     /** remote mongoDB password */
-    MONGO_PASSWORD: '',
+    MONGO_PASSWORD: 'user',
     /** remote mongoDB url */
-    MONGO_URL: ''
+    MONGO_URL: 'ds041484.mongolab.com:41484/emag-score'
 };

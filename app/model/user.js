@@ -115,16 +115,38 @@ var User = {
     },
     findAllFavorites: function(req, res) {
         Database.connect().done(function (database) {
-                // var pageNr = req.params.pageNr;
-                // var resultsPerPage = parseInt(req.params.resultsPerPage);
-                // if (isNaN(resultsPerPage)) resultsPerPage = 5;
+                var pageNr = req.params.pageNr;
+                var resultsPerPage = parseInt(req.params.resultsPerPage);
+                if (isNaN(resultsPerPage)) resultsPerPage = 5;
                 // console.log("page no: " + pageNr + " results per page: " + resultsPerPage);
-                database.collection('user').find()
-                    .skip(pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0)
-                    .limit(resultsPerPage)
-                    .toArray(function (err, docs) {
-                        console.log('findAllProducts: ' + docs);
-                        res.jsonp(docs);
+                database.collection('user')
+                    .findOne({email: req.params.userId}, function (err, doc) {
+                        console.log('findAllFavorites: ' + doc);
+                        var result = [];
+                        if (doc.favorites) {
+                            var start = pageNr > 0 ? ((pageNr - 1) * resultsPerPage) : 0;
+                            var end = start + resultsPerPage;
+                            if (end > doc.favorites.length)
+                                end = doc.favorites.length;
+                            // wtf -> this looks really ugly
+                            for (var i = start; i < end; i++)
+                                result.push(doc.favorites[i].product);
+                        }
+                        res.jsonp(result);
+                    });
+            }, function (reason) {
+                // handle onRejected
+                // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
+                console.log(reason);
+            }
+        );
+    },
+    findFavoritesTotal: function(req, res) {
+        Database.connect().done(function (database) {
+                database.collection('user')
+                    .findOne({email: req.params.userId}, function (err, doc) {
+                        console.log('findAllFavorites: ' + doc);
+                        res.jsonp(doc.favorites.length);
                     });
             }, function (reason) {
                 // handle onRejected
