@@ -11,11 +11,6 @@ angular.module('emagScoreApp').factory('ProductFactory', function(ProductService
     var product = {};
     var products = [];
     var productProvider;
-    var paginator = {
-        maxPages: 5,
-        currentPage: 1,
-        resultsPerPage: 5
-    };
 
     return {
         setProduct: function(data) {
@@ -30,30 +25,20 @@ angular.module('emagScoreApp').factory('ProductFactory', function(ProductService
         getProducts: function() {
             return products;
         },
-        setTotalPages: function (total) {
-            paginator.total = total;
-        },
-        setCurrentPage: function (currentPage) {
-            paginator.currentPage = currentPage;
-        },
         getPaginator: function() {
-            return paginator;
+            return productProvider.paginator;
         },
         toggleProductCategory: function (data) {
-            paginator.currentPage = 1;
-            productProvider = new ProductCategoryProvider(paginator, data);
+            productProvider = new ProductCategoryProvider(data);
         },
         toggleProductSearch: function (data) {
-            paginator.currentPage = 1;
-            productProvider = new ProductSearchProvider(paginator, data);
+            productProvider = new ProductSearchProvider(data);
         },
         toggleProductTrending: function (type, data) {
-            paginator.currentPage = 1;
-            productProvider = new ProductTrendProvider(paginator, type, data);
+            productProvider = new ProductTrendProvider(type, data);
         },
         toggleProductFavorite: function (data) {
-            paginator.currentPage = 1;
-            productProvider = new ProductFavoriteProvider(paginator, data);
+            productProvider = new ProductFavoriteProvider(data);
         },
         refreshProducts: function () {
             ProductService.retrieveProducts(productProvider)
@@ -66,7 +51,7 @@ angular.module('emagScoreApp').factory('ProductFactory', function(ProductService
             ProductService.retrieveTotalNrOfProducts(productProvider)
                 .then(function (total) {
                     // promise fulfilled
-                    paginator.total = total;
+                    productProvider.paginator.total = total;
                 }, function(error) {
                     // display error message in UI
                 });

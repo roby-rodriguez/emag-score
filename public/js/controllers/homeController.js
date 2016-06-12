@@ -4,7 +4,7 @@ angular.module('emagScoreApp').controller('HomeController', function($scope, Pro
         { color : 'primary', icon : 'fa-smile-o', title : 'Trending Low', link : 'trendingLow' },
         { color : 'green', icon : 'fa-frown-o', title : 'Trending High', link : 'trendingHigh' },
         { color : 'yellow', icon : 'fa-plus-circle', title : 'New Products' },
-        { color : 'red', icon : 'fa-ban', title : 'Retired products' },
+        { color : 'red', icon : 'fa-ban', title : 'Retired products' }
     ];
     
     $scope.setTabNavigation = function (selectedTab) {
@@ -13,7 +13,7 @@ angular.module('emagScoreApp').controller('HomeController', function($scope, Pro
         ProductFactory.refreshProducts();
     };
 
-    ProductService.retrieveTotalNrOfProducts(new ProductTrendProvider(null, 'trendingLow'))
+    ProductService.retrieveTotalNrOfProducts(new ProductTrendProvider('trendingLow'))
         .then(function (total) {
             // promise fulfilled
             $scope.tabs[0].count = total;
@@ -21,7 +21,7 @@ angular.module('emagScoreApp').controller('HomeController', function($scope, Pro
             // display error message in UI
         });
 
-    ProductService.retrieveTotalNrOfProducts(new ProductTrendProvider(null, 'trendingHigh'))
+    ProductService.retrieveTotalNrOfProducts(new ProductTrendProvider('trendingHigh'))
         .then(function (total) {
             // promise fulfilled
             $scope.tabs[1].count = total;
