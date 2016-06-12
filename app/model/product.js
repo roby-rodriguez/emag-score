@@ -187,55 +187,57 @@ var Product = {
      * @param json product documents resulted from scanning
      */
     saveBulkProducts: function (json) {
-        // establish connection to db
-        Database.connect().done(function (database) {
-                console.log("Started bulk update");
-                // get (create) the collection
-                var col = database.collection('product');
-                // initialize the unordered batch
-                var batch = col.initializeUnorderedBulkOp();
-                // iterate documents to update
-                json.forEach(function (doc, index, array) {
-                    // update product entry if found, appending current price to history, else freshly insert new product
-                    batch.find({name: doc.name}).upsert().updateOne(
-                        {
-                            $addToSet : {
-                                history: {
-                                    price: doc.price,
-                                    dateRecorded: DateUtil.getCurrentDate()
+        if (json.length) {
+            // establish connection to db
+            Database.connect().done(function (database) {
+                    console.log("Started bulk update");
+                    // get (create) the collection
+                    var col = database.collection('product');
+                    // initialize the unordered batch
+                    var batch = col.initializeUnorderedBulkOp();
+                    // iterate documents to update
+                    json.forEach(function (doc, index, array) {
+                        // update product entry if found, appending current price to history, else freshly insert new product
+                        batch.find({name: doc.name}).upsert().updateOne(
+                            {
+                                $addToSet : {
+                                    history: {
+                                        price: doc.price,
+                                        dateRecorded: DateUtil.getCurrentDate()
+                                    }
+                                },
+                                $set  : {
+                                    name: doc.name,
+                                    pid: doc.pid,
+                                    price : doc.price,
+                                    currency: doc.currency,
+                                    category: doc.category,
+                                    productLink: doc.productLink,
+                                    imageLink: doc.imageLink,
+                                    ratingScore: doc.ratingScore,
+                                    nrRatings: doc.nrRatings,
+                                    active: doc.active,
+                                    details: doc.details
                                 }
-                            },
-                            $set  : {
-                                name: doc.name,
-                                pid: doc.pid,
-                                price : doc.price,
-                                currency: doc.currency,
-                                category: doc.category,
-                                productLink: doc.productLink,
-                                imageLink: doc.imageLink,
-                                ratingScore: doc.ratingScore,
-                                nrRatings: doc.nrRatings,
-                                active: doc.active,
-                                details: doc.details
                             }
-                        }
-                    );
-                });
+                        );
+                    });
 
-                // execute the operations, set journal concern to 1 to enable logging
-                batch.execute({w: 0, j: 1}, function (err, result) {
-                    if (err)
-                        console.log(err);
-                    else
-                        console.log("Finished bulk update -> matched: " + result.nMatched+ ", inserted: " + result.nInserted
-                            + ", upserted: " + result.nUpserted + ", modified: " + result.nModified + ", removed: " + result.nRemoved);
-                });
-            }, function (reason) {
-                // handle onRejected
-                // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
-                console.log(reason);
-            }
-        );
+                    // execute the operations, set journal concern to 1 to enable logging
+                    batch.execute({w: 0, j: 1}, function (err, result) {
+                        if (err)
+                            console.log(err);
+                        else
+                            console.log("Finished bulk update -> matched: " + result.nMatched+ ", inserted: " + result.nInserted
+                                + ", upserted: " + result.nUpserted + ", modified: " + result.nModified + ", removed: " + result.nRemoved);
+                    });
+                }, function (reason) {
+                    // handle onRejected
+                    // todo build custom error handler -> http://expressjs.com/guide/error-handling.html
+                    console.log(reason);
+                }
+            );
+        }
     }
 };
 

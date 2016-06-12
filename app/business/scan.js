@@ -10,10 +10,6 @@
  * http://stackoverflow.com/questions/13906357/making-multiple-requests-and-passing-them-to-a-template-express-node-js-fb
  */
 var request = require('request');
-//todo refactor this into a npm package -> implement native support for ruby sources
-var Agent = require('socks5-http-client/lib/Agent');
-Agent.keepAlive = true;
-Agent.keepAliveMsecs = 100000;
 var cheerio = require('cheerio');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -66,12 +62,7 @@ var Scanner = {
                 // the requests are forwarded to the peasant proxy router which directs them into the tor circuits
                 try {
                     request({
-                        url: this.url,
-                        agentClass: Agent,
-                        agentOptions: {
-                            socksHost: '127.0.0.1',
-                            socksPort: 9999
-                        }
+                        url: this.url
                     }, function(error, response, html) {
                         if (error)
                             self.manager.emit('error', error, self);
@@ -243,25 +234,18 @@ var Scanner = {
                 var i = 1;
                 (function iterativeProductScan(index, done) {
                     request({
-                        url: Scanner.productsUrl().replace("$0", category.name).replace("$1", index.toString()),
-                        agentClass: Agent,
-                        agentOptions: {
-                            socksHost: '127.0.0.1',
-                            socksPort: 9999
-                        }
+                        url: Scanner.productsUrl().replace("$0", category.name).replace("$1", index.toString())
                     }, function(error, response, html) {
                         if (error) {
                             console.error('Encountered error');
                             // save products found so far
-                            if (json.length)
-                                Product.saveBulkProducts(json);
+                            Product.saveBulkProducts(json);
                             finishedCallback(docs);
                         } else {
                             if (captchaCheck(html)) {
                                 console.error('Encountered captcha');
                                 // save products found so far
-                                if (json.length)
-                                    Product.saveBulkProducts(json);
+                                Product.saveBulkProducts(json);
                                 finishedCallback(docs);
                             } else {
                                 total = total || getPaginatorPages(html, 'emg-pagination-no');
