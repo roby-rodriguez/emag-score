@@ -34,8 +34,8 @@ angular.module('emagScoreApp').factory('ProductFactory', function(ProductService
         toggleProductSearch: function (data) {
             productProvider = new ProductSearchProvider(data);
         },
-        toggleProductTrending: function (type, data) {
-            productProvider = new ProductTrendProvider(type, data);
+        toggleProductTrending: function (data) {
+            productProvider = new ProductTrendProvider(data);
         },
         toggleProductFavorite: function (data) {
             productProvider = new ProductFavoriteProvider(data);

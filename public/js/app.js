@@ -40,12 +40,12 @@ angular.module("emagScoreApp", [
             controller: 'ProductDetailController',
             controllerAs: 'vm'
         })
-        .when('/trendingLow', {
+        .when('/low', {
             templateUrl: 'views/product.html',
             controller: 'ProductTrendController',
             controllerAs: 'vm'
         })
-        .when('/trendingHigh', {
+        .when('/high', {
             templateUrl: 'views/product.html',
             controller: 'ProductTrendController',
             controllerAs: 'vm'

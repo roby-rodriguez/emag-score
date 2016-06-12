@@ -1,8 +1,9 @@
 angular.module('emagScoreApp').controller('HomeController', function($scope, ProductService, HomeFactory, ProductFactory,
                                                                      ProductTrendProvider) {
+    // ugly af -> needs refactoring
     $scope.tabs = [
-        { color : 'primary', icon : 'fa-smile-o', title : 'Trending Low', link : 'trendingLow' },
-        { color : 'green', icon : 'fa-frown-o', title : 'Trending High', link : 'trendingHigh' },
+        { color : 'primary', icon : 'fa-smile-o', title : 'Trending Low', link : 'low' },
+        { color : 'green', icon : 'fa-frown-o', title : 'Trending High', link : 'high' },
         { color : 'yellow', icon : 'fa-plus-circle', title : 'New Products' },
         { color : 'red', icon : 'fa-ban', title : 'Retired products' }
     ];
@@ -13,7 +14,7 @@ angular.module('emagScoreApp').controller('HomeController', function($scope, Pro
         ProductFactory.refreshProducts();
     };
 
-    ProductService.retrieveTotalNrOfProducts(new ProductTrendProvider('trendingLow'))
+    ProductService.retrieveTotalNrOfProducts(new ProductTrendProvider('low'))
         .then(function (total) {
             // promise fulfilled
             $scope.tabs[0].count = total;
@@ -21,7 +22,7 @@ angular.module('emagScoreApp').controller('HomeController', function($scope, Pro
             // display error message in UI
         });
 
-    ProductService.retrieveTotalNrOfProducts(new ProductTrendProvider('trendingHigh'))
+    ProductService.retrieveTotalNrOfProducts(new ProductTrendProvider('high'))
         .then(function (total) {
             // promise fulfilled
             $scope.tabs[1].count = total;

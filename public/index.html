@@ -43,7 +43,7 @@
                         <li class="active">
                             <a href="#/home"><i class="fa fa-fw fa-home"></i> Home</a>
                         </li>
-                        <li>
+                        <li ng-controller="AuthController" ng-show="isAuthenticated()">
                             <a href="#/favorites"><i class="fa fa-fw fa-star"></i> Favorites</a>
                         </li>
                         <div ng-controller="CategoryController">
